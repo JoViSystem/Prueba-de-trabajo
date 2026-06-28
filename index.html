@@ -1112,7 +1112,7 @@ function verificarSesion() {
         configurarSelectoresPorRol();
         rotarSabiasQue();
 
-        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor";
+        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor" || usuarioActivo.rol === "Gerente" || usuarioActivo.rol === "Coordinador";
         document.getElementById("admin-view-selector").style.display = puedeSupervisar ? "flex" : "none";
         document.getElementById("welcome-title").innerText = puedeSupervisar ? "Dashboard Global de Control" : `Dashboard - ${usuarioActivo.nombre}`;
         
@@ -1156,7 +1156,7 @@ function configurarSelectoresPorRol() {
 }
 
 function getFiltroUsuario() {
-    let esSupervisorOAdmin = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor";
+    let esSupervisorOAdmin = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor" || usuarioActivo.rol === "Gerente" || usuarioActivo.rol === "Coordinador";
     return esSupervisorOAdmin ? document.getElementById("filtroEmpleado").value : usuarioActivo.username;
 }
 
@@ -1490,7 +1490,7 @@ function render(){
         let claseEstado = a.estado === "Pendiente" ? "badge-rojo" : a.estado === "En proceso" ? "badge-amarillo" : "badge-verde";
         
         // Bloqueo de seguridad si la tarea pertenece a otra persona y no se es admin
-        let deshabilitarControl = (usuarioActivo.rol !== "admin" && a.usuario !== usuarioActivo.username) ? "disabled" : "";
+        let deshabilitarControl = (usuarioActivo.rol !== "admin" && a.usuario !== usuarioActivo.username && usuarioActivo.rol !== "Gerente") ? "disabled" : "";
         let nombreDisplay = USUARIOS_VALIDOS[a.usuario] ? USUARIOS_VALIDOS[a.usuario].nombre : "Desconocido";
 
         // 1. Render de Tabla Operativa Diaria
@@ -1513,7 +1513,7 @@ function render(){
             </tr>`;
         }
 
-        // 2. Render de Tabla Historial Completo (¡CORREGIDO CON EDICIÓN Y BORRADO!)
+        // 2. Render de Tabla Historial Completo
         if (pasaFiltroUsuario) {
             tablaHistorial.innerHTML += `
             <tr>
@@ -1588,7 +1588,7 @@ actividadForm.onsubmit = e => {
     let frec = document.getElementById("frecuencia").value;
 
     if (frec === "unica") {
-        actividades.push({ usuario: asignadoA, titulo: titulo.value, categoria: categoria.value, fecha: fechaBaseStr, horas: horas, estado: estado.value });
+        actividades.push({ usuario: asignadoA, titulo: titulo.value, category: categoria.value, fecha: fechaBaseStr, horas: horas, estado: estado.value });
     } 
     else if (frec === "diaria") {
         let dateObj = new Date(fechaBaseStr + "T00:00:00");
@@ -1609,7 +1609,7 @@ actividadForm.onsubmit = e => {
             let dd = String(dateObj.getDate()).padStart(2, '0');
             let nuevaFecha = `${yyyy}-${mm}-${dd}`;
             actividades.push({ usuario: asignadoA, titulo: `${titulo.value} (Mes ${m+1}/3)`, categoria: categoria.value, fecha: nuevaFecha, horas: horas, estado: estado.value });
-            dateObj.setMonth(dateObj.getMonth() + 1);
+            dateObj.setMonth(dateObj.setMonth() + 1);
         }
     }
 
@@ -1627,7 +1627,7 @@ function renderRep(){
         if (filtro !== "todos" && r.usuario !== filtro) return;
 
         let claseRep = r.estado === "Abierto" ? "badge-rojo" : r.estado === "En proceso" ? "badge-amarillo" : "badge-verde";
-        let deshabilitarSelect = (usuarioActivo.rol !== "admin" && r.usuario !== usuarioActivo.username) ? "disabled" : "";
+        let deshabilitarSelect = (usuarioActivo.rol !== "admin" && r.usuario !== usuarioActivo.username && usuarioActivo.rol !== "Gerente") ? "disabled" : "";
 
         t.innerHTML += `
         <tr>
@@ -1670,7 +1670,7 @@ function renderAsociados() {
         
         let belongsToFilter = (filtro === "todos" || asoc.usuario === filtro);
         let claseEst = asoc.estatus === "En depuración" ? "badge-rojo" : asoc.estatus === "En revisión y firma" ? "badge-amarillo" : asoc.estatus === "Listo para enviar" ? "badge-azul" : "badge-verde";
-        let deshabilitarCampos = (usuarioActivo.rol !== "admin" && asoc.usuario !== usuarioActivo.username) ? "disabled" : "";
+        let deshabilitarCampos = (usuarioActivo.rol !== "admin" && asoc.usuario !== usuarioActivo.username && usuarioActivo.rol !== "Gerente") ? "disabled" : "";
         let horasMostrables = typeof asoc.horas === 'number' ? asoc.horas.toFixed(2) : "0.00";
 
         if (belongsToFilter) {
