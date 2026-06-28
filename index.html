@@ -608,7 +608,7 @@ table select {
             <img id="sidebar-avatar" src="" class="profile-img-preview" alt="Avatar" onerror="this.src='https://www.w3schools.com/howto/img_avatar.png'">
             <div class="user-info">
                 <strong id="user-display-name">Usuario</strong><br>
-                <span id="user-display-role" style="font-size:11px; opacity:0.8;">Rol</span>
+                <span id="user-display-role" style="font-size:12px; font-weight:600; color:#cbd5e1;">Rol</span>
             </div>
         </div>
 
@@ -661,7 +661,7 @@ table select {
             </div>
 
             <div class="sabias-que-container">
-                <h4>💡 ¿Sabías qué? - Cultura de Seguridad</h4>
+                <h4>💡 ¿Sabías qué? - Culture de Seguridad</h4>
                 <p id="sabias-que-texto">Cargando dato de concientización...</p>
             </div>
 
@@ -1106,7 +1106,9 @@ function verificarSesion() {
         document.getElementById("app-content").style.display = "block";
         
         document.getElementById("user-display-name").innerText = usuarioActivo.nombre;
-        document.getElementById("user-display-role").innerText = `Rol: ${usuarioActivo.rol.toUpperCase()}`;
+        
+        // Muestra exactamente el cargo del objeto de forma limpia (Inspector, Coordinador, Gerente o admin)
+        document.getElementById("user-display-role").innerText = usuarioActivo.rol;
         
         cargarPreferenciasUsuarioActivo();
         configurarSelectoresPorRol();
@@ -1358,7 +1360,7 @@ function renderModuloVisualAccidentabilidad() {
                     backgroundColor: [
                         accidentabilidadMaestra.notions.accidentes > 0 ? '#ef4444' : '#2563eb', 
                         accidentabilidadMaestra.now.accidentes > 0 ? '#ef4444' : '#3b82f6', 
-                        accidentabilidadMaestra.gtg.accidentes > 0 ? '#ef4444' : '#1e293b'
+                        accidentabilidadMaestra.gtg.accidentes > 0 ? '#1e293b' : '#1e293b'
                     ],
                     borderRadius: 6
                 }]
@@ -1588,7 +1590,7 @@ actividadForm.onsubmit = e => {
     let frec = document.getElementById("frecuencia").value;
 
     if (frec === "unica") {
-        actividades.push({ usuario: asignadoA, titulo: titulo.value, category: categoria.value, fecha: fechaBaseStr, horas: horas, estado: estado.value });
+        actividades.push({ usuario: asignadoA, titulo: titulo.value, categoria: categoria.value, fecha: fechaBaseStr, horas: horas, estado: estado.value });
     } 
     else if (frec === "diaria") {
         let dateObj = new Date(fechaBaseStr + "T00:00:00");
