@@ -1105,16 +1105,18 @@ function verificarSesion() {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("app-content").style.display = "block";
         
+        // Muestra el nombre real del usuario
         document.getElementById("user-display-name").innerText = usuarioActivo.nombre;
         
-        // Muestra exactamente el cargo del objeto de forma limpia (Inspector, Coordinador, Gerente o admin)
+        // CORRECCIÓN: Muestra estrictamente el rol del objeto (Inspector, Coordinador, Gerente) sin textos fijos intercalados
         document.getElementById("user-display-role").innerText = usuarioActivo.rol;
         
         cargarPreferenciasUsuarioActivo();
         configurarSelectoresPorRol();
         rotarSabiasQue();
 
-        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor" || usuarioActivo.rol === "Gerente" || usuarioActivo.rol === "Coordinador";
+        // Control de permisos basado en el nuevo esquema de rangos
+        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "Gerente" || usuarioActivo.rol === "Coordinador";
         document.getElementById("admin-view-selector").style.display = puedeSupervisar ? "flex" : "none";
         document.getElementById("welcome-title").innerText = puedeSupervisar ? "Dashboard Global de Control" : `Dashboard - ${usuarioActivo.nombre}`;
         
