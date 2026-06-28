@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control de Cumplimiento & HSE</title>
+<title>Control de Cumplimiento </title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -590,7 +590,7 @@ table select {
 <div id="login-screen" class="login-container">
     <div class="login-card">
         <h2>🛡️ Control de Cumplimiento</h2>
-        <p class="subtitle">Sistema de Monitoreo & Continuidad HSE</p>
+        <p class="subtitle">Sistema de Monitoreo & Continuidad </p>
         <form id="loginForm" onsubmit="login(event)">
             <input type="text" id="username" placeholder="Usuario" required>
             <input type="password" id="password" placeholder="Contraseña" required>
@@ -639,7 +639,7 @@ table select {
 
             <div class="cards">
                 <div class="card c-total">
-                    <h3>Carga Operativa Total</h3>
+                    <h3>Actividades del dia</h3>
                     <p id="total">0</p>
                 </div>
                 <div class="card c-horas">
@@ -1037,9 +1037,9 @@ table select {
 <script>
 let USUARIOS_VALIDOS = JSON.parse(localStorage.getItem("app_usuarios")) || {
     "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Super Administrador" },
-    "jgarcia": { clave: "1234", rol: "empleado", nombre: "Joan Garcia" },
-    "jhilario": { clave: "1234", rol: "empleado", nombre: "Jhoan Hilario" },
-    "vtorres": { clave: "1234", rol: "supervisor", nombre: "Victor Torres" }
+    "jgarcia": { clave: "1234", rol: "Inspector", nombre: "Joan Garcia" },
+    "jhilario": { clave: "1234", rol: "Coordinador", nombre: "Jhoan Hilario" },
+    "vtorres": { clave: "1234", rol: "Gerente", nombre: "Victor Torres" }
 };
 
 const SABIAS_QUE_DATOS = [
