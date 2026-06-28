@@ -608,7 +608,7 @@ table select {
             <img id="sidebar-avatar" src="" class="profile-img-preview" alt="Avatar" onerror="this.src='https://www.w3schools.com/howto/img_avatar.png'">
             <div class="user-info">
                 <strong id="user-display-name">Usuario</strong><br>
-                <span id="user-display-role" style="font-size:12px; font-weight:600; color:#cbd5e1;">Rol</span>
+                <span id="user-display-role" style="font-size:11px; opacity:0.8;">Rol</span>
             </div>
         </div>
 
@@ -639,7 +639,7 @@ table select {
 
             <div class="cards">
                 <div class="card c-total">
-                    <h3>Actividades del dia</h3>
+                    <h3>Carga Operativa Total</h3>
                     <p id="total">0</p>
                 </div>
                 <div class="card c-horas">
@@ -661,7 +661,7 @@ table select {
             </div>
 
             <div class="sabias-que-container">
-                <h4>💡 ¿Sabías qué? - Culture de Seguridad</h4>
+                <h4>💡 ¿Sabías qué? - Cultura de Seguridad</h4>
                 <p id="sabias-que-texto">Cargando dato de concientización...</p>
             </div>
 
@@ -1037,9 +1037,9 @@ table select {
 <script>
 let USUARIOS_VALIDOS = JSON.parse(localStorage.getItem("app_usuarios")) || {
     "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Super Administrador" },
-    "jgarcia": { clave: "1234", rol: "Inspector", nombre: "Joan Garcia" },
-    "jhilario": { clave: "1234", rol: "Coordinador", nombre: "Jhoan Hilario" },
-    "vtorres": { clave: "1234", rol: "Gerente", nombre: "Victor Torres" }
+    "jgarcia": { clave: "1234", rol: "empleado", nombre: "Joan Garcia" },
+    "jhilario": { clave: "1234", rol: "empleado", nombre: "Jhoan Hilario" },
+    "vtorres": { clave: "1234", rol: "supervisor", nombre: "Victor Torres" }
 };
 
 const SABIAS_QUE_DATOS = [
@@ -1099,31 +1099,20 @@ function logout() {
     usuarioActivo = null;
     verificarSesion();
 }
+
 function verificarSesion() {
     if (usuarioActivo) {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("app-content").style.display = "block";
         
-        // 1. Limpieza absoluta del nombre y rol
         document.getElementById("user-display-name").innerText = usuarioActivo.nombre;
-        
-        // Forzamos a que SOLO pinte el rol de la BD (limpiando cualquier residuo previo)
-        let rolLimpio = (usuarioActivo.rol || "").trim();
-        document.getElementById("user-display-role").innerText = rolLimpio;
+        document.getElementById("user-display-role").innerText = `Rol: ${usuarioActivo.rol.toUpperCase()}`;
         
         cargarPreferenciasUsuarioActivo();
         configurarSelectoresPorRol();
         rotarSabiasQue();
 
-        // 2. CORRECCIÓN VISTA SUPERVISOR: Validación robusta de roles autorizados
-        let rolLower = rolLimpio.toLowerCase();
-        let puedeSupervisar = rolLower === "admin" || 
-                              rolLower === "gerente" || 
-                              rolLower === "coordinador" || 
-                              rolLower === "supervisor" || 
-                              usuarioActivo.nombre.includes("Victor"); // Salvaguarda para Víctor
-
-        // Devolvemos el acceso al selector de vistas corporativas
+        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor";
         document.getElementById("admin-view-selector").style.display = puedeSupervisar ? "flex" : "none";
         document.getElementById("welcome-title").innerText = puedeSupervisar ? "Dashboard Global de Control" : `Dashboard - ${usuarioActivo.nombre}`;
         
@@ -1167,7 +1156,7 @@ function configurarSelectoresPorRol() {
 }
 
 function getFiltroUsuario() {
-    let esSupervisorOAdmin = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor" || usuarioActivo.rol === "Gerente" || usuarioActivo.rol === "Coordinador";
+    let esSupervisorOAdmin = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor";
     return esSupervisorOAdmin ? document.getElementById("filtroEmpleado").value : usuarioActivo.username;
 }
 
@@ -1369,7 +1358,7 @@ function renderModuloVisualAccidentabilidad() {
                     backgroundColor: [
                         accidentabilidadMaestra.notions.accidentes > 0 ? '#ef4444' : '#2563eb', 
                         accidentabilidadMaestra.now.accidentes > 0 ? '#ef4444' : '#3b82f6', 
-                        accidentabilidadMaestra.gtg.accidentes > 0 ? '#1e293b' : '#1e293b'
+                        accidentabilidadMaestra.gtg.accidentes > 0 ? '#ef4444' : '#1e293b'
                     ],
                     borderRadius: 6
                 }]
@@ -1501,7 +1490,7 @@ function render(){
         let claseEstado = a.estado === "Pendiente" ? "badge-rojo" : a.estado === "En proceso" ? "badge-amarillo" : "badge-verde";
         
         // Bloqueo de seguridad si la tarea pertenece a otra persona y no se es admin
-        let deshabilitarControl = (usuarioActivo.rol !== "admin" && a.usuario !== usuarioActivo.username && usuarioActivo.rol !== "Gerente") ? "disabled" : "";
+        let deshabilitarControl = (usuarioActivo.rol !== "admin" && a.usuario !== usuarioActivo.username) ? "disabled" : "";
         let nombreDisplay = USUARIOS_VALIDOS[a.usuario] ? USUARIOS_VALIDOS[a.usuario].nombre : "Desconocido";
 
         // 1. Render de Tabla Operativa Diaria
@@ -1524,7 +1513,7 @@ function render(){
             </tr>`;
         }
 
-        // 2. Render de Tabla Historial Completo
+        // 2. Render de Tabla Historial Completo (¡CORREGIDO CON EDICIÓN Y BORRADO!)
         if (pasaFiltroUsuario) {
             tablaHistorial.innerHTML += `
             <tr>
@@ -1620,7 +1609,7 @@ actividadForm.onsubmit = e => {
             let dd = String(dateObj.getDate()).padStart(2, '0');
             let nuevaFecha = `${yyyy}-${mm}-${dd}`;
             actividades.push({ usuario: asignadoA, titulo: `${titulo.value} (Mes ${m+1}/3)`, categoria: categoria.value, fecha: nuevaFecha, horas: horas, estado: estado.value });
-            dateObj.setMonth(dateObj.setMonth() + 1);
+            dateObj.setMonth(dateObj.getMonth() + 1);
         }
     }
 
@@ -1638,7 +1627,7 @@ function renderRep(){
         if (filtro !== "todos" && r.usuario !== filtro) return;
 
         let claseRep = r.estado === "Abierto" ? "badge-rojo" : r.estado === "En proceso" ? "badge-amarillo" : "badge-verde";
-        let deshabilitarSelect = (usuarioActivo.rol !== "admin" && r.usuario !== usuarioActivo.username && usuarioActivo.rol !== "Gerente") ? "disabled" : "";
+        let deshabilitarSelect = (usuarioActivo.rol !== "admin" && r.usuario !== usuarioActivo.username) ? "disabled" : "";
 
         t.innerHTML += `
         <tr>
@@ -1681,7 +1670,7 @@ function renderAsociados() {
         
         let belongsToFilter = (filtro === "todos" || asoc.usuario === filtro);
         let claseEst = asoc.estatus === "En depuración" ? "badge-rojo" : asoc.estatus === "En revisión y firma" ? "badge-amarillo" : asoc.estatus === "Listo para enviar" ? "badge-azul" : "badge-verde";
-        let deshabilitarCampos = (usuarioActivo.rol !== "admin" && asoc.usuario !== usuarioActivo.username && usuarioActivo.rol !== "Gerente") ? "disabled" : "";
+        let deshabilitarCampos = (usuarioActivo.rol !== "admin" && asoc.usuario !== usuarioActivo.username) ? "disabled" : "";
         let horasMostrables = typeof asoc.horas === 'number' ? asoc.horas.toFixed(2) : "0.00";
 
         if (belongsToFilter) {
