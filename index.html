@@ -6,8 +6,6 @@
 <title>Control de Cumplimiento</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- SDK OFICIAL DE SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -23,6 +21,7 @@
     --sec-azul: #3b82f6;
 }
 
+/* TEMAS ADICIONALES */
 body.theme-light {
     --bg-main: #f8fafc;
     --sidebar-bg: #1e293b;
@@ -47,6 +46,7 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
+/* PANTALLA LOGIN */
 .login-container {
     display: flex;
     justify-content: center;
@@ -91,6 +91,7 @@ body {
     font-weight: 500;
 }
 
+/* SIDEBAR */
 .sidebar {
     width: 280px;
     height: 100vh;
@@ -181,6 +182,7 @@ body {
     color: white !important;
 }
 
+/* MAIN CONTENT */
 .main {
     margin-left: 280px;
     padding: 40px;
@@ -204,6 +206,7 @@ h2.section-title {
     padding-bottom: 8px;
 }
 
+/* FILTROS AVANZADOS */
 .admin-filter {
     background: #fff;
     padding: 16px 24px;
@@ -264,6 +267,7 @@ h2.section-title {
     border: 1px solid #cbd5e1;
 }
 
+/* SABÍAS QUE */
 .sabias-que-container {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f8fafc;
@@ -271,7 +275,7 @@ h2.section-title {
     border-radius: 14px;
     margin-top: 35px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    border-left: 6px solid var(--sec-yellow);
+    border-left: 66px solid var(--sec-yellow);
     position: relative;
     overflow: hidden;
 }
@@ -293,6 +297,7 @@ h2.section-title {
     color: #cbd5e1;
 }
 
+/* BOTONES DE EXPORTACIÓN */
 .export-bar {
     display: flex;
     gap: 10px;
@@ -319,6 +324,7 @@ h2.section-title {
 }
 .btn-export-pdf:hover { background: #dc2626 !important; }
 
+/* INDICADORES */
 .cards {
     display: flex;
     gap: 16px;
@@ -357,6 +363,7 @@ h2.section-title {
 .card.c-pendientes { border-top-color: var(--sec-yellow); }
 .card.c-reportes { border-top-color: var(--sec-red); }
 
+/* FORMULARIOS */
 form {
     background: white;
     padding: 28px;
@@ -417,6 +424,7 @@ button:hover {
     background: var(--accent-blue-hover);
 }
 
+/* TABLAS */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -487,31 +495,7 @@ table select {
     border-color: var(--sec-red);
 }
 
-.log-box {
-    max-height: 120px;
-    overflow-y: auto;
-    border: 1px solid #e2e8f0;
-    padding: 8px;
-    border-radius: 6px;
-    background: #f8fafc;
-}
-
-.log-item {
-    font-size: 12px;
-    padding: 6px 8px;
-    background: white;
-    border-left: 3px solid var(--accent-blue);
-    margin-bottom: 4px;
-    border-radius: 0 4px 4px 0;
-    line-height: 1.4;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-}
-
-.badge-rojo { background-color: #fee2e2 !important; color: #b91c1c !important; }
-.badge-amarillo { background-color: #fef9c3 !important; color: #a16207 !important; }
-.badge-verde { background-color: #dcfce7 !important; color: #15803d !important; }
-.badge-azul { background-color: #dbeafe !important; color: #1e40af !important; }
-
+/* SECCIONES */
 .section { display: none; }
 .active { display: block; }
 #app-content { display: none; }
@@ -587,7 +571,6 @@ table select {
 </div>
 
 <div id="app-content">
-
     <div class="sidebar">
         <h2>🛡️ Control de Cumplimiento</h2>
         
@@ -612,14 +595,12 @@ table select {
     </div>
 
     <div class="main">
-
         <div id="inicio" class="section active">
             <h1 id="welcome-title">Dashboard General</h1>
 
             <div id="admin-view-selector" class="admin-filter" style="display:none;">
                 <strong>🔍 Filtro de Inspección (Ver datos de):</strong>
-                <select id="filtroEmpleado" onchange="ejecutarFiltroGlobal();">
-                </select>
+                <select id="filtroEmpleado" onchange="ejecutarFiltroGlobal();"></select>
             </div>
 
             <p id="dashboard-date-indicator" style="font-size:14px; font-weight:600; color:var(--accent-blue); margin-top:-15px; margin-bottom:20px;">⏱️ Mostrando métricas del día actual</p>
@@ -657,8 +638,7 @@ table select {
 
         <div id="actividades" class="section">
             <h1>📋 Gestión de Actividades de Seguridad</h1>
-            
-            <form id="actividadForm">
+            <form id="actividadForm" onsubmit="guardarActividadManual(event)">
                 <input id="titulo" placeholder="Título de la actividad / Tarea de campo" required>
                 <div class="form-group-row">
                     <div>
@@ -677,7 +657,6 @@ table select {
                         <select id="asignar_a"></select>
                     </div>
                 </div>
-
                 <div class="form-group-row">
                     <div>
                         <label>🔄 Frecuencia / Recurrencia</label>
@@ -692,12 +671,10 @@ table select {
                         <input type="date" id="fecha" required>
                     </div>
                 </div>
-
                 <div class="form-group-row">
                     <div><label>Hora Inicio</label><input type="time" id="hora_inicio" required></div>
                     <div><label>Hora Fin</label><input type="time" id="hora_fin" required></div>
                 </div>
-
                 <select id="estado">
                     <option>Pendiente</option>
                     <option>En proceso</option>
@@ -708,36 +685,22 @@ table select {
             </form>
 
             <h2 class="section-title">Actividades Planificadas</h2>
-            
             <div class="calendar-filter-box">
                 <strong>📅 Trazabilidad Diaria (Filtrar por Día Específico):</strong>
                 <input type="date" id="filtroCalendarioDia" onchange="ejecutarFiltroGlobal();">
                 <button type="button" class="btn-reset-date" onclick="limpiarFiltroFecha();">Ver Hoy</button>
             </div>
-
-            <div class="export-bar">
-                <button class="btn-export-excel" onclick="exportarActividadesExcel()">📥 Exportar Actividades a Excel</button>
-            </div>
-
             <table>
                 <thead>
                     <tr><th>Responsable</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Horas</th><th>Estado</th><th>Acciones</th></tr>
                 </thead>
                 <tbody id="tabla"></tbody>
             </table>
-
-            <h2 class="section-title">📂 Historial Completo de Actividades (Archivo)</h2>
-            <table>
-                <thead>
-                    <tr><th>Responsable</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Horas</th><th>Estado Final</th><th>Acciones</th></tr>
-                </thead>
-                <tbody id="tablaHistorial"></tbody>
-            </table>
         </div>
 
         <div id="reportes" class="section">
             <h1>⚠️ Mesa de Control de Reportes Recibidos</h1>
-            <form id="reporteForm">
+            <form id="reporteForm" onsubmit="guardarReporteManual(event)">
                 <div class="form-group-row">
                     <div><label>Título o Anomalía</label><input id="r_titulo" required></div>
                     <div><label>Reportado por</label><input id="r_origen" required></div>
@@ -756,12 +719,7 @@ table select {
                 <select id="r_estado"><option>Abierto</option><option>En proceso</option><option>Cerrado</option></select>
                 <button type="submit">🚨 Registrar Reporte</button>
             </form>
-
             <h2 class="section-title">Reportes Registrados</h2>
-            <div class="export-bar">
-                <button class="btn-export-excel" onclick="exportarReportesExcel()">📥 Exportar Reportes a Excel</button>
-            </div>
-
             <table>
                 <thead>
                     <tr><th>Encargado HSE</th><th>Anomalía</th><th>Reportado Por</th><th>Área</th><th>Criticidad</th><th>Estatus</th><th>Acciones</th></tr>
@@ -772,15 +730,6 @@ table select {
 
         <div id="accidentabilidad" class="section">
             <h1>📊 Pizarra de Estadísticas de Accidentabilidad</h1>
-            <p style="color: #64748b; margin-top:-10px;">Control aislado y manual de horas hombre trabajadas por entidad jurídica.</p>
-            
-            <div id="acc-banner-trazabilidad" class="trazabilidad-banner" style="display:none;">
-                <div>
-                    ⏳ Han transcurrido <strong id="acc-dias-calculados">0</strong> días desde la última actualización de esta empresa.
-                </div>
-                <button type="button" style="padding: 6px 12px; font-size: 12px;" onclick="aplicarDiasTrazabilidad()">➕ Sumar al Tablero</button>
-            </div>
-
             <form id="accidentabilidadForm" onsubmit="guardarDatosAccidentabilidad(event)">
                 <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #cbd5e1; margin-bottom:20px;">
                     <label style="font-weight:bold; color:var(--accent-blue); font-size:15px;">🏢 Seleccionar Empresa para Carga de Datos:</label>
@@ -790,118 +739,48 @@ table select {
                         <option value="gtg">GTG</option>
                     </select>
                 </div>
-
                 <div class="form-group-row">
-                    <div>
-                        <label>📅 Fecha de Registro / Actualización</label>
-                        <input type="date" id="acc_fecha_actualizacion" required onchange="verificarTrazabilidadFechas()">
-                    </div>
-                    <div>
-                        <label>🔢 Días Transcurridos sin Accidentes Acumulados</label>
-                        <input type="number" id="acc_input_dias" placeholder="Ej: 66" min="0" oninput="calcularHorasEnCaliente()" required>
-                    </div>
-                </div>
-                
-                <div class="form-group-row" style="background: #fff5f5; padding: 10px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #fecaca;">
-                    <div>
-                        <label style="color: var(--sec-red);">🚨 Cantidad de Accidentes Registrados en este Periodo</label>
-                        <input type="number" id="acc_accidentes_periodo" value="0" min="0" oninput="calcularHorasEnCaliente()" style="border-color: var(--sec-red); margin-bottom:0;">
-                    </div>
-                    <div>
-                        <label>💡 Regla Operativa SST</label>
-                        <p style="font-size:12px; color:#555; margin: 6px 0 0 0;">Cada accidente registrado reinicia el cálculo de Horas Seguras del periodo actual a cero (0).</p>
-                    </div>
-                </div>
-
-                <div class="form-group-row">
-                    <div>
-                        <label>👥 Cantidad de Colaboradores / Dotación Activa</label>
-                        <input type="number" id="acc_colaboradores" value="55" min="1" oninput="calcularHorasEnCaliente()" required>
-                    </div>
-                    <div>
-                        <label>⏱️ Horas por Jornada Laboral Estándar</label>
-                        <input type="number" id="acc_jornada" value="8" min="1" max="24" oninput="calcularHorasEnCaliente()" required>
-                    </div>
+                    <div><label>📅 Fecha Registro</label><input type="date" id="acc_fecha_actualizacion" required></div>
+                    <div><label>🔢 Días Transcurridos sin Accidentes</label><input type="number" id="acc_input_dias" required oninput="calcularHorasEnCaliente()"></div>
                 </div>
                 <div class="form-group-row">
-                    <div>
-                        <label>🏆 Record Días Histórico Anterior</label>
-                        <input type="number" id="acc_record_anterior" placeholder="Ej: 244" min="0" required>
-                    </div>
-                    <div>
-                        <label>🧮 Cálculo de Horas Proyectadas de Seguridad</label>
-                        <input type="text" id="acc_preview_horas" value="0 hrs" disabled style="background:#e2e8f0; font-weight:bold; color:var(--accent-blue);">
-                    </div>
+                    <div><label>👥 Cantidad de Colaboradores</label><input type="number" id="acc_colaboradores" required oninput="calcularHorasEnCaliente()"></div>
+                    <div><label>⏱️ Jornada Laboral (hrs)</label><input type="number" id="acc_jornada" value="8" required oninput="calcularHorasEnCaliente()"></div>
                 </div>
-                <button type="submit" style="background:var(--sidebar-bg); width:100%;">💾 Guardar y Actualizar Pizarra (<span id="txt-btn-empresa">Notions Dominicana</span>)</button>
+                <div class="form-group-row">
+                    <div><label>🏆 Record Días Anterior</label><input type="number" id="acc_record_anterior" required></div>
+                    <div><label>🧮 Horas Proyectadas</label><input type="text" id="acc_preview_horas" disabled style="background:#e2e8f0; font-weight:bold;"></div>
+                </div>
+                <button type="submit" style="width:100%;">💾 Guardar y Actualizar Pizarra</button>
             </form>
-
-            <h2 class="section-title">📊 Desglose de Consolidado Estadístico & Horas Proyectadas por Empresa</h2>
-            <div class="charts-container" style="margin-top: 15px;">
-                <div class="chart-box" style="flex: 1.2; min-width: 300px;">
-                    <h3>📈 Comparativa: Horas Hombre Sin Accidentes acumuladas</h3>
-                    <div style="position: relative; height:240px;"><canvas id="accidentabilidadEmpresasChart"></canvas></div>
-                </div>
-                <div style="flex: 0.8; min-width: 250px; background: white; padding: 20px; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <h3 style="margin-top:0; font-size:14px; color:var(--sidebar-bg); text-transform:uppercase; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">Resumen Resguardado</h3>
-                    <div id="resumen-lista-empresas" style="font-size:14px; display:flex; flex-direction:column; gap:12px; margin-top:10px;">
-                    </div>
-                </div>
+            <div class="charts-container">
+                <div class="chart-box"><canvas id="accidentabilidadEmpresasChart"></canvas></div>
             </div>
         </div>
 
         <div id="inducciones" class="section">
             <h1>🦺 Módulo de Inducciones de Seguridad Industrial</h1>
-            
             <form id="induccionForm" onsubmit="guardarInduccion(event)">
                 <div class="form-group-row">
                     <div>
                         <label>Tipo de Personal</label>
-                        <select id="ind_tipo" onchange="adaptarFormularioInduccion(this.value)">
+                        <select id="ind_tipo">
                             <option value="Contratista">Contratista 👤</option>
                             <option value="Visitante">Visitante 👥</option>
                         </select>
                     </div>
-                    <div>
-                        <label>Nombre Completo</label>
-                        <input id="ind_nombre" required placeholder="Nombre del trabajador">
-                    </div>
+                    <div><label>Nombre Completo</label><input id="ind_nombre" required></div>
                 </div>
                 <div class="form-group-row">
-                    <div>
-                        <label>Identificación (Cédula/RNC)</label>
-                        <input id="ind_documento" required placeholder="000-0000000-0">
-                    </div>
-                    <div>
-                        <label>Fecha de la Inducción</label>
-                        <input type="date" id="ind_fecha" required>
-                    </div>
+                    <div><label>Identificación (Cédula/RNC)</label><input id="ind_documento" required></div>
+                    <div><label>Fecha Inducción</label><input type="date" id="ind_fecha" required></div>
                 </div>
-                <div class="form-group-row" id="campos-dinamicos-induccion">
-                    <div>
-                        <label>Empresa Contratista</label>
-                        <input id="ind_empresa" required placeholder="Nombre de la empresa contratista">
-                    </div>
-                </div>
-                <button type="submit" style="background: var(--sec-green);">📋 Validar e Inscribir Inducción</button>
+                <button type="submit">📋 Inscribir Inducción</button>
             </form>
-
-            <h2 class="section-title">📜 Estatus de Vigencias de Acceso (Vence automático en 1 año)</h2>
-            <div class="export-bar">
-                <button class="btn-export-excel" style="background:#059669 !important;" onclick="exportarInduccionesExcel()">📥 Exportar Inducciones (CSV)</button>
-            </div>
+            <h2 class="section-title">Estatus de Vigencias</h2>
             <table>
                 <thead>
-                    <tr>
-                        <th>Personal</th>
-                        <th>Nombre</th>
-                        <th>Identificación / Empresa</th>
-                        <th>Área</th>
-                        <th>Registro</th>
-                        <th>Vencimiento</th>
-                        <th>Estatus</th>
-                        <th>Acciones</th>
-                    </tr>
+                    <tr><th>Personal</th><th>Nombre</th><th>Identificación</th><th>Registro</th><th>Vencimiento</th><th>Estatus</th></tr>
                 </thead>
                 <tbody id="tablaInducciones"></tbody>
             </table>
@@ -909,112 +788,51 @@ table select {
 
         <div id="asociados" class="section">
             <h1>🤝 Gestión de Asociados de Negocios</h1>
-            
-            <form id="asociadoForm" onsubmit="guardarAsociado(event)">
+            <form id="asociadoForm" onsubmit="guardarAsociadoManual(event)">
                 <div class="form-group-row">
+                    <div><label>Nombre del Asociado</label><input id="asoc_nombre" required></div>
                     <div>
-                        <label>Nombre del Asociado / Empresa / Proveedor</label>
-                        <input id="asoc_nombre" placeholder="Ej: Suministros Industriales S.A." required>
-                    </div>
-                    <div>
-                        <label>Estatus del Proceso Inicial</label>
+                        <label>Estatus Inicial</label>
                         <select id="asoc_estatus">
-                            <option value="En depuración">🔍 En depuración</option>
-                            <option value="En revisión y firma">✍️ En revisión y firma</option>
-                            <option value="Listo para enviar">📦 Listo para enviar</option>
-                            <option value="Enviado">🚀 Enviado</option>
+                            <option>En depuración</option>
+                            <option>En revisión y firma</option>
+                            <option>Listo para enviar</option>
+                            <option>Enviado</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group-row">
-                    <div>
-                        <label>Fecha de Registro</label>
-                        <input type="date" id="asoc_fecha" required>
-                    </div>
-                    <div>
-                        <label>🎯 Asignar Responsable:</label>
-                        <select id="asoc_asignar_a"></select>
-                    </div>
-                </div>
-                <div class="form-group-row">
-                    <div><label>⏱️ Hora Inicio Operación</label><input type="time" id="asoc_hora_inicio" required></div>
-                    <div><label>⏱️ Hora Fin Operación</label><input type="time" id="asoc_hora_fin" required></div>
+                    <div><label>Fecha Registro</label><input type="date" id="asoc_fecha" required></div>
+                    <div><label>Responsable:</label><select id="asoc_asignar_a"></select></div>
                 </div>
                 <button type="submit">🤝 Registrar Asociado</button>
             </form>
-
-            <h2 class="section-title">📋 Flujo de Operaciones Activas</h2>
-            <div class="export-bar">
-                <button class="btn-export-excel" onclick="exportarAsociadosExcel()">📥 Exportar Flujo de Asociados a Excel</button>
-            </div>
-
+            <h2 class="section-title">Flujo Activo</h2>
             <table>
                 <thead>
-                    <tr>
-                        <th>Responsable Asignado</th>
-                        <th>Nombre del Asociado</th>
-                        <th>Fecha Registro</th>
-                        <th>Tiempo Invertido</th>
-                        <th>Estatus Actual</th>
-                        <th>Acciones</th>
-                    </tr>
+                    <tr><th>Responsable</th><th>Asociado</th><th>Fecha</th><th>Estatus</th></tr>
                 </thead>
                 <tbody id="tablaAsociados"></tbody>
-            </table>
-
-            <h2 class="section-title" style="color: var(--accent-blue);">📂 Vista de Historial Global e Inspección General</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="background:#0f172a;">📍 ¿Quién lo tiene?</th>
-                        <th style="background:#0f172a;">Empresa / Asociado</th>
-                        <th style="background:#0f172a;">Tiempo Invertido</th>
-                        <th style="background:#0f172a;">Estatus Actual</th>
-                        <th style="background:#0f172a;">📜 Bitácora Histórica de Cambios y Fechas</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaAsociadosHistorialGlobal"></tbody>
             </table>
         </div>
 
         <div id="indicadores" class="section">
             <h1>📈 Indicadores Estadísticos HSE</h1>
             <div class="charts-container">
-                <div class="chart-box"><h3>Distribución por Categorías</h3><div style="position: relative; height:220px;"><canvas id="categoryChart"></canvas></div></div>
-                <div class="chart-box"><h3>Estado de Cumplimiento</h3><div style="position: relative; height:220px;"><canvas id="complianceChart"></canvas></div></div>
+                <div class="chart-box"><canvas id="categoryChart"></canvas></div>
+                <div class="chart-box"><canvas id="complianceChart"></canvas></div>
             </div>
         </div>
 
         <div id="configuracion" class="section">
-            <h1>⚙️ Panel de Configuración del Usuario</h1>
-            
-            <div class="charts-container" style="margin-top: 15px;">
-                <div class="chart-box" style="flex:1;">
-                    <h3>👤 Foto de Perfil</h3>
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:15px; background:#f8fafc; padding:20px; border-radius:10px;">
-                        <img id="config-avatar-preview" src="" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid var(--accent-blue);">
-                        <input type="file" id="input-avatar-file" accept="image/*" onchange="actualizarFotoPerfil(this)">
-                        <small style="color:gray;">Sube un archivo de imagen local (.jpg, .png)</small>
-                    </div>
-                </div>
-
-                <div class="chart-box" style="flex:1.2;">
-                    <h3>🎨 Preferencias de Interfaz & Cuenta</h3>
-                    
-                    <label>Tema de Apariencia de la Página:</label>
-                    <select id="config-theme-selector" onchange="cambiarTemaApariencia(this.value)">
-                        <option value="default">🌑 Modo Oscuro Corporativo (Por defecto)</option>
-                        <option value="light">☀️ Modo Claro Limpio</option>
-                        <option value="eco">🌿 Modo Ecológico SST</option>
-                    </select>
-
-                    <form id="passwordChangeForm" onsubmit="cambiarContrasenaUsuario(event)" style="box-shadow:none; padding:0; margin-top:20px;">
-                        <h4 style="margin:0 0 10px 0; color:var(--sidebar-bg);">🔒 Modificar Contraseña</h4>
-                        <label>Nueva Contraseña:</label>
-                        <input type="password" id="new-password-input" required placeholder="Escribe tu nueva clave">
-                        <button type="submit" style="width:100%;">⚡ Guardar Nueva Contraseña</button>
-                    </form>
-                </div>
+            <h1>⚙️ Panel de Configuración</h1>
+            <div class="chart-box">
+                <h3>Prefrencias de Apariencia</h3>
+                <select id="config-theme-selector" onchange="cambiarTemaApariencia(this.value)">
+                    <option value="default">🌑 Modo Oscuro Corporativo</option>
+                    <option value="light">☀️ Modo Claro Limpio</option>
+                    <option value="eco">🌿 Modo Ecológico SST</option>
+                </select>
             </div>
         </div>
 
@@ -1022,69 +840,71 @@ table select {
 </div>
 
 <script>
-// CONEXIÓN GLOBAL A TU PROYECTO DE SUPABASE
-const SUPABASE_URL = "https://gboiiwvzpkzefabuxmus.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_Bko00sMkVNLUrWVuqJ7VFw_SL4rje8Z";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+// Roles y Usuarios Estrictos asignados correctamente
 let USUARIOS_VALIDOS = JSON.parse(localStorage.getItem("app_usuarios")) || {
-    "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Super Administrador" },
-    "jgarcia": { clave: "1234", rol: "empleado", nombre: "Joan Garcia" },
-    "jhilario": { clave: "1234", rol: "empleado", nombre: "Jhoan Hilario" },
-    "vtorres": { clave: "1234", rol: "supervisor", nombre: "Victor Torres" }
+    "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Dep. Cumplimiento & MC" },
+    "jgarcia": { clave: "1234", rol: "inspector", nombre: "Joan García" },
+    "jhilario": { clave: "1234", rol: "coordinador", nombre: "Jhoan Hilario" },
+    "vtorres": { clave: "1234", rol: "manager", nombre: "Victor Torres" }
 };
 
 const SABIAS_QUE_DATOS = [
-    "La Regla de Oro de la SST indica: 'Si no es seguro, detén el trabajo'. El derecho a rehusarse a tareas unsafe salva miles de vidas anualmente.",
-    "El uso correcto del casco industrial reduce hasta en un 85% el impacto de objetos contundentes en la cabeza.",
-    "Los accidentes de trayecto (itínere) también forman parte de la cobertura y matriz de gestión de la salud ocupacional.",
-    "Un orden y limpieza impecables (5S) en las áreas logísticas elimina de raíz el 60% de las caídas y tropezones en el trabajo.",
-    "Tomarse micro-pausas activas de 5 minutos cada 2 horas reduce drásticamente la fatiga muscular y los errores operativos en campo.",
-    "El uso de calzado con punta de protección evita aplastamientos equivalentes a caídas de objetos de más de 20 kg."
+    "La Regla de Oro de la SST indica: 'Si no es seguro, detén el trabajo'.",
+    "El uso correcto del casco industrial reduce hasta en un 85% el impacto de objetos contundentes.",
+    "Un orden y limpieza impecables (5S) elimina de raíz el 60% de las caídas en logística.",
+    "Tomarse micro-pausas activas de 5 minutos cada 2 horas reduce la fatiga muscular en campo."
 ];
 
 let usuarioActivo = JSON.parse(sessionStorage.getItem("sesion_usuario")) || null;
-
-// ARREGLOS DE TRABAJO LOCAL SINCRONIZADOS CON LA NUBE
-let actividades = [];
-let reportes = [];
-let asociados = [];
-let inducciones = [];
-let accidentabilidadMaestra = {
-    notions: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 55, jornada: 8, recordAnterior: 0, accidentes: 0 },
-    now: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 30, jornada: 8, recordAnterior: 0, accidentes: 0 },
-    gtg: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 20, jornada: 8, recordAnterior: 0, accidentes: 0 }
+let actividades = JSON.parse(localStorage.getItem("act")) || [];
+let reportes = JSON.parse(localStorage.getItem("rep")) || [];
+let asociados = JSON.parse(localStorage.getItem("asoc")) || [];
+let inducciones = JSON.parse(localStorage.getItem("ind")) || [];
+let accidentabilidadMaestra = JSON.parse(localStorage.getItem("acc_master_3_companies")) || {
+    notions: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 55, jornada: 8, recordAnterior: 100, accidentes: 0 },
+    now: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 30, jornada: 8, recordAnterior: 80, accidentes: 0 },
+    gtg: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 20, jornada: 8, recordAnterior: 50, accidentes: 0 }
 };
 
 let myCategoryChart = null;
 let myComplianceChart = null;
-let myAccidentabilidadChart = null; 
+let myAccidentabilidadChart = null;
 
 function obtenerFechaHoyLocal() {
     let d = new Date();
-    let yyyy = d.getFullYear();
-    let mm = String(d.getMonth() + 1).padStart(2, '0');
-    let dd = String(d.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 function rotarSabiasQue() {
     let elem = document.getElementById("sabias-que-texto");
     if(elem) {
-        let indice = Math.floor(Math.random() * SABIAS_QUE_DATOS.length);
-        elem.innerText = SABIAS_QUE_DATOS[indice];
+        elem.innerText = SABIAS_QUE_DATOS[Math.floor(Math.random() * SABIAS_QUE_DATOS.length)];
     }
 }
 
+// CORRECCIÓN RADICAL DEL LOGIN: Sin recargas, directo y forzado visualmente
 function login(e) {
-    e.preventDefault();
-    let user = document.getElementById("username").value.trim().toLowerCase();
-    let pass = document.getElementById("password").value;
-    if (USUARIOS_VALIDOS[user] && USUARIOS_VALIDOS[user].clave === pass) {
-        usuarioActivo = { username: user, ...USUARIOS_VALIDOS[user] };
-        sessionStorage.setItem("sesion_usuario", JSON.stringify(usuarioActivo));
-        verificarSesion();
-    } else { alert("Usuario o contraseña incorrectos."); }
+    if (e) e.preventDefault();
+    
+    let userField = document.getElementById("username");
+    let passField = document.getElementById("password");
+    
+    if (!userField || !passField) return;
+
+    let user = userField.value.trim().toLowerCase();
+    let pass = passField.value;
+
+    if (USUARIOS_VALIDOS[user]) {
+        if (USUARIOS_VALIDOS[user].clave === pass) {
+            usuarioActivo = { username: user, ...USUARIOS_VALIDOS[user] };
+            sessionStorage.setItem("sesion_usuario", JSON.stringify(usuarioActivo));
+            verificarSesion();
+        } else {
+            alert("❌ Contraseña incorrecta.");
+        }
+    } else {
+        alert("❌ El usuario ingresado no existe.");
+    }
 }
 
 function logout() {
@@ -1093,60 +913,27 @@ function logout() {
     verificarSesion();
 }
 
-// SINCRONIZACIÓN ASÍNCRONA DE ENTRADA CON SUPABASE
-async function cargarDatosDesdeSupabase() {
-    try {
-        const resAct = await supabase.from('actividades').select('*');
-        if (!resAct.error) actividades = resAct.data || [];
-
-        const resRep = await supabase.from('reportes').select('*');
-        if (!resRep.error) reportes = resRep.data || [];
-
-        const resAsoc = await supabase.from('asociados').select('*');
-        if (!resAsoc.error) asociados = resAsoc.data || [];
-
-        const resInd = await supabase.from('inducciones').select('*');
-        if (!resInd.error) inducciones = resInd.data || [];
-
-        const resAcc = await supabase.from('accidentabilidad').select('*');
-        if (!resAcc.error && resAcc.data) {
-            resAcc.data.forEach(row => {
-                accidentabilidadMaestra[row.empresa] = {
-                    fecha: row.fecha, dias: row.dias, colaboradores: row.colaboradores,
-                    jornada: row.jornada, recordAnterior: row.record_anterior, accidentes: row.accidentes
-                };
-            });
-        }
-        ejecutarFiltroGlobal();
-    } catch(err) {
-        console.error("Error al sincronizar datos:", err);
-    }
-}
-
-async function verificarSesion() {
+function verificarSesion() {
     if (usuarioActivo) {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("app-content").style.display = "block";
-        
         document.getElementById("user-display-name").innerText = usuarioActivo.nombre;
         document.getElementById("user-display-role").innerText = `Rol: ${usuarioActivo.rol.toUpperCase()}`;
         
-        cargarPreferenciasUsuarioActivo();
         configurarSelectoresPorRol();
         rotarSabiasQue();
 
-        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor";
+        // Control estricto de visibilidad por rol (Manager y Admin ven filtro global)
+        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "manager";
         document.getElementById("admin-view-selector").style.display = puedeSupervisar ? "flex" : "none";
         document.getElementById("welcome-title").innerText = puedeSupervisar ? "Dashboard Global de Control" : `Dashboard - ${usuarioActivo.nombre}`;
         
         if(!document.getElementById("filtroCalendarioDia").value){
             document.getElementById("filtroCalendarioDia").value = obtenerFechaHoyLocal();
         }
-
-        let compañiaPorDefecto = document.getElementById("acc_empresa_selector").value;
-        cargarEmpresaAccidentabilidad(compañiaPorDefecto);
-
-        await cargarDatosDesdeSupabase();
+        
+        cargarEmpresaAccidentabilidad(document.getElementById("acc_empresa_selector").value);
+        ejecutarFiltroGlobal();
     } else {
         document.getElementById("login-screen").style.display = "flex";
         document.getElementById("app-content").style.display = "none";
@@ -1157,221 +944,288 @@ function configurarSelectoresPorRol() {
     let filtroSelect = document.getElementById("filtroEmpleado");
     let asignaAct = document.getElementById("asignar_a");
     let asignaAsoc = document.getElementById("asoc_asignar_a");
-
+    
     let optionsFiltro = `<option value="todos">-- Todos los Empleados --</option>
-                         <option value="jgarcia">Joan Garcia</option>
+                         <option value="jgarcia">Joan García</option>
                          <option value="jhilario">Jhoan Hilario</option>
                          <option value="vtorres">Victor Torres</option>`;
                          
-    let optionsForm = `<option value="">-- Mismo (Asignación propia) --</option>
-                       <option value="jgarcia">Joan Garcia</option>
+    let optionsForm = `<option value="jgarcia">Joan García</option>
                        <option value="jhilario">Jhoan Hilario</option>
                        <option value="vtorres">Victor Torres</option>`;
-
-    if (usuarioActivo.rol === "admin") {
-        optionsFiltro += `<option value="dcumplimiento">Super Administrador</option>`;
-        optionsForm += `<option value="dcumplimiento">Super Administrador</option>`;
-    }
-
-    filtroSelect.innerHTML = optionsFiltro;
-    asignaAct.innerHTML = optionsForm;
-    asignaAsoc.innerHTML = optionsForm;
+    
+    if(filtroSelect) filtroSelect.innerHTML = optionsFiltro;
+    if(asignaAct) asignaAct.innerHTML = optionsForm;
+    if(asignaAsoc) asignaAsoc.innerHTML = optionsForm;
 }
 
-function getFiltroUsuario() {
-    let esSupervisorOAdmin = usuarioActivo.rol === "admin" || usuarioActivo.rol === "supervisor";
-    return esSupervisorOAdmin ? document.getElementById("filtroEmpleado").value : usuarioActivo.username;
-}
-
-function ejecutarFiltroGlobal() {
-    render(); renderRep(); renderAsociados(); renderInducciones(); updateCharts(); renderModuloVisualAccidentabilidad();
-}
-
-function showSection(id){
-    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-    document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active-menu"));
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active-menu'));
+    
+    let targetSection = document.getElementById(id);
+    if(targetSection) targetSection.classList.add('active');
+    
     let targetMenu = document.getElementById(`menu-${id}`);
-    if(targetMenu) targetMenu.classList.add("active-menu");
-    if(id === 'inicio') rotarSabiasQue();
-    if(id === 'indicadores' || id === 'inicio' || id === 'accidentabilidad') updateCharts();
-}
+    if(targetMenu) targetMenu.classList.add('active-menu');
 
-function limpiarFiltroFecha() {
-    document.getElementById("filtroCalendarioDia").value = obtenerFechaHoyLocal();
-    ejecutarFiltroGlobal();
-}
-
-function cargarPreferenciasUsuarioActivo() {
-    let keyTheme = `theme_${usuarioActivo.username}`;
-    let keyAvatar = `avatar_${usuarioActivo.username}`;
-    
-    let savedTheme = localStorage.getItem(keyTheme) || "default";
-    let savedAvatar = localStorage.getItem(keyAvatar) || "";
-    
-    cambiarTemaApariencia(savedTheme);
-    document.getElementById("config-theme-selector").value = savedTheme;
-    
-    document.getElementById("sidebar-avatar").src = savedAvatar;
-    document.getElementById("config-avatar-preview").src = savedAvatar;
+    if(id === 'indicadores' || id === 'inicio' || id === 'accidentabilidad') {
+        setTimeout(renderizarGraficosYMetricas, 50);
+    }
 }
 
 function cambiarTemaApariencia(tema) {
-    document.body.className = ""; 
-    if(tema === "light") document.body.classList.add("theme-light");
-    if(tema === "eco") document.body.classList.add("theme-eco");
-    
-    if(usuarioActivo) {
-        localStorage.setItem(`theme_${usuarioActivo.username}`, tema);
-    }
+    document.body.className = "";
+    if (tema === "light") document.body.classList.add("theme-light");
+    if (tema === "eco") document.body.classList.add("theme-eco");
 }
 
-function actualizarFotoPerfil(input) {
-    if (input.files && input.files[0]) {
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            let base64Img = e.target.result;
-            document.getElementById("sidebar-avatar").src = base64Img;
-            document.getElementById("config-avatar-preview").src = base64Img;
-            localStorage.setItem(`avatar_${usuarioActivo.username}`, base64Img);
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function cambiarContrasenaUsuario(e) {
-    e.preventDefault();
-    let nuevaClave = document.getElementById("new-password-input").value;
-    let usernameKey = usuarioActivo.username;
-    USUARIOS_VALIDOS[usernameKey].clave = nuevaClave;
-    
-    localStorage.setItem("app_usuarios", JSON.stringify(USUARIOS_VALIDOS));
-    usuarioActivo.clave = nuevaClave;
-    sessionStorage.setItem("sesion_usuario", JSON.stringify(usuarioActivo));
-    
-    document.getElementById("passwordChangeForm").reset();
-    alert("🔒 Contraseña actualizada correctamente en el sistema.");
-}
-
-/* ACCIDENTABILIDAD */
-let diasTrazabilidadCalculados = 0;
-
+// CÁLCULOS EN CALIENTE DE ACCIDENTABILIDAD
 function cargarEmpresaAccidentabilidad(empresaKey) {
-    let datos = accidentabilidadMaestra[empresaKey];
-    let nombresMap = { notions: "Notions Dominicana", now: "Now Logistics", gtg: "GTG" };
-    document.getElementById("txt-btn-empresa").innerText = nombresMap[empresaKey];
-
-    document.getElementById("acc_fecha_actualizacion").value = datos.fecha || obtenerFechaHoyLocal();
-    document.getElementById("acc_input_dias").value = datos.dias;
-    document.getElementById("acc_colaboradores").value = datos.colaboradores;
-    document.getElementById("acc_jornada").value = datos.jornada;
-    document.getElementById("acc_record_anterior").value = datos.recordAnterior;
-    document.getElementById("acc_accidentes_periodo").value = datos.accidentes || 0;
-    
-    verificarTrazabilidadFechas();
+    let data = accidentabilidadMaestra[empresaKey];
+    if(!data) return;
+    document.getElementById("acc_fecha_actualizacion").value = data.fecha;
+    document.getElementById("acc_input_dias").value = data.dias;
+    document.getElementById("acc_colaboradores").value = data.colaboradores;
+    document.getElementById("acc_jornada").value = data.jornada;
+    document.getElementById("acc_record_anterior").value = data.recordAnterior;
     calcularHorasEnCaliente();
-}
-
-function verificarTrazabilidadFechas() {
-    let fechaGuardadaStr = document.getElementById("acc_fecha_actualizacion").value;
-    let hoyStr = obtenerFechaHoyLocal();
-    let banner = document.getElementById("acc-banner-trazabilidad");
-    
-    if (fechaGuardadaStr && fechaGuardadaStr < hoyStr) {
-        let f1 = new Date(fechaGuardadaStr + "T00:00:00");
-        let f2 = new Date(hoyStr + "T00:00:00");
-        let diferenciaTiempo = f2.getTime() - f1.getTime();
-        diasTrazabilidadCalculados = Math.floor(diferenciaTiempo / (1000 * 60 * 60 * 24));
-        
-        if (diasTrazabilidadCalculados > 0) {
-            document.getElementById("acc-dias-calculados").innerText = diasTrazabilidadCalculados;
-            banner.style.display = "flex";
-            return;
-        }
-    }
-    banner.style.display = "none";
-}
-
-function aplicarDiasTrazabilidad() {
-    let diasActuales = parseInt(document.getElementById("acc_input_dias").value) || 0;
-    document.getElementById("acc_input_dias").value = diasActuales + diasTrazabilidadCalculados;
-    document.getElementById("acc_fecha_actualizacion").value = obtenerFechaHoyLocal();
-    
-    document.getElementById("acc-banner-trazabilidad").style.display = "none";
-    calcularHorasEnCaliente();
-    alert(`Se añadieron +${diasTrazabilidadCalculados} días transcurridos automáticamente.`);
 }
 
 function calcularHorasEnCaliente() {
     let dias = parseInt(document.getElementById("acc_input_dias").value) || 0;
     let colab = parseInt(document.getElementById("acc_colaboradores").value) || 0;
     let jornada = parseInt(document.getElementById("acc_jornada").value) || 0;
-    let accidentes = parseInt(document.getElementById("acc_accidentes_periodo").value) || 0;
-    
-    let totalHoras = accidentes > 0 ? 0 : dias * colab * jornada;
-    document.getElementById("acc_preview_horas").value = totalHoras.toLocaleString() + " hrs";
+    let horasCalculadas = dias * colab * jornada;
+    document.getElementById("acc_preview_horas").value = horasCalculadas.toLocaleString() + " hrs";
 }
 
-async function guardarDatosAccidentabilidad(e) {
+function guardarDatosAccidentabilidad(e) {
     e.preventDefault();
-    let empresaKey = document.getElementById("acc_empresa_selector").value;
-    let accidentes = parseInt(document.getElementById("acc_accidentes_periodo").value) || 0;
-    let diasInput = parseInt(document.getElementById("acc_input_dias").value) || 0;
-    
-    if (accidentes > 0 && diasInput > 0) {
-        if(confirm("🚨 Detectamos accidentes en el periodo. Al guardar, los días sin accidentes se reiniciarán a 0. ¿Confirmar protocolo?")) {
-            diasInput = 0;
-            document.getElementById("acc_input_dias").value = 0;
-        }
-    }
-
-    const payload = {
-        empresa: empresaKey,
+    let emp = document.getElementById("acc_empresa_selector").value;
+    accidentabilidadMaestra[emp] = {
         fecha: document.getElementById("acc_fecha_actualizacion").value,
-        dias: diasInput,
+        dias: parseInt(document.getElementById("acc_input_dias").value) || 0,
         colaboradores: parseInt(document.getElementById("acc_colaboradores").value) || 0,
         jornada: parseInt(document.getElementById("acc_jornada").value) || 0,
-        record_anterior: parseInt(document.getElementById("acc_record_anterior").value) || 0,
-        accidentes: accidentes
+        recordAnterior: parseInt(document.getElementById("acc_record_anterior").value) || 0,
+        accidentes: 0
     };
-
-    const { error } = await supabase.from('accidentabilidad').upsert([payload]);
-    
-    if (error) {
-        alert("Error de red en Supabase: " + error.message);
-    } else {
-        let nombresMap = { notions: "Notions Dominicana", now: "Now Logistics", gtg: "GTG" };
-        alert(`¡Pizarra de Accidentabilidad de [${nombresMap[empresaKey]}] actualizada en la nube!`);
-        await cargarDatosDesdeSupabase();
-    }
+    localStorage.setItem("acc_master_3_companies", JSON.stringify(accidentabilidadMaestra));
+    alert("📊 Datos de accidentabilidad guardados correctamente.");
+    renderizarGraficosYMetricas();
 }
 
-function renderModuloVisualAccidentabilidad() {
-    let contenedorLista = document.getElementById("resumen-lista-empresas");
-    if(!contenedorLista) return;
-    contenedorLista.innerHTML = "";
+// GUARDADOS MANUALES LOCALES (Sincronizables)
+function guardarActividadManual(e) {
+    e.preventDefault();
+    let nueva = {
+        id: Date.now(),
+        usuario: document.getElementById("asignar_a").value,
+        titulo: document.getElementById("titulo").value,
+        categoria: document.getElementById("categoria").value,
+        fecha: document.getElementById("fecha").value,
+        horas: 2,
+        estado: document.getElementById("estado").value,
+        observacion: document.getElementById("observacion").value
+    };
+    actividades.push(nueva);
+    localStorage.setItem("act", JSON.stringify(actividades));
+    document.getElementById("actividadForm").reset();
+    ejecutarFiltroGlobal();
+}
 
-    let nombresMap = { notions: "Notions Dominicana", now: "Now Logistics", gtg: "GTG" };
+function guardarReporteManual(e) {
+    e.preventDefault();
+    let nuevo = {
+        id: Date.now(),
+        encargado: usuarioActivo.username,
+        titulo: document.getElementById("r_titulo").value,
+        origen: document.getElementById("r_origen").value,
+        tipo: document.getElementById("r_tipo").value,
+        criticidad: document.getElementById("r_criticidad").value,
+        estado: document.getElementById("r_estado").value,
+        desc: document.getElementById("r_desc").value
+    };
+    reportes.push(nuevo);
+    localStorage.setItem("rep", JSON.stringify(reportes));
+    document.getElementById("reporteForm").reset();
+    ejecutarFiltroGlobal();
+}
+
+function guardarInduccion(e) {
+    e.preventDefault();
+    let nueva = {
+        id: Date.now(),
+        tipo: document.getElementById("ind_tipo").value,
+        nombre: document.getElementById("ind_nombre").value,
+        documento: document.getElementById("ind_documento").value,
+        fecha: document.getElementById("ind_fecha").value
+    };
+    inducciones.push(nueva);
+    localStorage.setItem("ind", JSON.stringify(inducciones));
+    document.getElementById("induccionForm").reset();
+    ejecutarFiltroGlobal();
+}
+
+function guardarAsociadoManual(e) {
+    e.preventDefault();
+    let nuevo = {
+        id: Date.now(),
+        usuario: document.getElementById("asoc_asignar_a").value,
+        nombre: document.getElementById("asoc_nombre").value,
+        fecha: document.getElementById("asoc_fecha").value,
+        estatus: document.getElementById("asoc_estatus").value
+    };
+    asociados.push(nuevo);
+    localStorage.setItem("asoc", JSON.stringify(asociados));
+    document.getElementById("asociadoForm").reset();
+    ejecutarFiltroGlobal();
+}
+
+function eliminarElemento(listaKey, id) {
+    if(!confirm("¿Seguro que deseas eliminar este registro?")) return;
+    if(listaKey === 'act') { actividades = actividades.filter(a => a.id !== id); localStorage.setItem("act", JSON.stringify(actividades)); }
+    if(listaKey === 'rep') { reportes = reportes.filter(r => r.id !== id); localStorage.setItem("rep", JSON.stringify(reportes)); }
+    ejecutarFiltroGlobal();
+}
+
+function limpiarFiltroFecha() {
+    document.getElementById("filtroCalendarioDia").value = "";
+    ejecutarFiltroGlobal();
+}
+
+// PROCESADOR DE VISTAS Y FILTROS SEGÚN ROL
+function ejecutarFiltroGlobal() {
+    let filtroUser = document.getElementById("filtroEmpleado").value;
+    let filtroFecha = document.getElementById("filtroCalendarioDia").value;
     
-    Object.keys(accidentabilidadMaestra).forEach(key => {
-        let em = accidentabilidadMaestra[key];
-        let calcHoras = em.accidentes > 0 ? 0 : em.dias * em.colaboradores * em.jornada;
-        let tieneAccidenteBadge = em.accidentes > 0 ? `<span class="badge-rojo" style="padding:1px 6px; border-radius:4px; font-size:10px;">🚨 Siniestro Activo</span>` : `✅ Operación Limpia`;
-        
-        contenedorLista.innerHTML += `
-        <div style="padding: 8px; border-left: 4px solid ${em.accidentes > 0 ? 'var(--sec-red)' : 'var(--accent-blue)'}; background: #f8fafc; border-radius: 0 6px 6px 0;">
-            <strong style="color: var(--sidebar-bg);">${nombresMap[key]}</strong> ${tieneAccidenteBadge}<br>
-            <small style="color: #64748b;">📅 Días sin accidentes: <strong>${em.dias} días</strong></small><br>
-            <small style="color: #64748b;">⚠️ Siniestros registrados: <strong>${em.accidentes || 0}</strong></small><br>
-            <small style="color: var(--accent-blue); font-weight: bold;">⏱️ Horas seguras: ${calcHoras.toLocaleString()} hrs</small>
-        </div>`;
+    // Si no es admin/manager, el inspector o coordinador solo ve sus datos propios obligatoriamente
+    if(usuarioActivo.rol !== "admin" && usuarioActivo.rol !== "manager") {
+        filtroUser = usuarioActivo.username;
+    }
+
+    // Renderizar Tabla Actividades
+    let tbodyAct = document.getElementById("tabla");
+    if(tbodyAct) {
+        let filtradas = actividades.filter(a => {
+            let matchUser = (filtroUser === "todos" || a.usuario === filtroUser);
+            let matchFecha = (!filtroFecha || a.fecha === filtroFecha);
+            return matchUser && matchFecha;
+        });
+        tbodyAct.innerHTML = filtradas.map(a => `
+            <tr>
+                <td><strong>${a.usuario.toUpperCase()}</strong></td>
+                <td>${a.titulo}</td>
+                <td><span class="badge-azul" style="padding:4px 8px; border-radius:4px;">${a.categoria}</span></td>
+                <td>${a.fecha}</td>
+                <td>${a.horas} hrs</td>
+                <td><span class="${a.estado==='Completada'?'badge-verde':'badge-amarillo'}" style="padding:4px 8px; border-radius:4px;">${a.estado}</span></td>
+                <td><button class="btn-delete" onclick="eliminarElemento('act', ${a.id})">❌</button></td>
+            </tr>
+        `).join('');
+    }
+
+    // Renderizar Tabla Reportes
+    let tbodyRep = document.getElementById("tablaReportes");
+    if(tbodyRep) {
+        tbodyRep.innerHTML = reportes.map(r => `
+            <tr>
+                <td>${r.encargado}</td>
+                <td>${r.titulo}</td>
+                <td>${r.origen}</td>
+                <td>${r.tipo}</td>
+                <td><span class="${r.criticidad==='Alto'?'badge-rojo':r.criticidad==='Medio'?'badge-amarillo':'badge-verde'}" style="padding:4px 8px; border-radius:4px;">${r.criticidad}</span></td>
+                <td><strong>${r.estado}</strong></td>
+                <td><button class="btn-delete" onclick="eliminarElemento('rep', ${r.id})">❌</button></td>
+            </tr>
+        `).join('');
+    }
+
+    // Renderizar Tabla Inducciones
+    let tbodyInd = document.getElementById("tablaInducciones");
+    if(tbodyInd) {
+        tbodyInd.innerHTML = inducciones.map(i => `
+            <tr>
+                <td>${i.tipo}</td>
+                <td>${i.nombre}</td>
+                <td>${i.documento}</td>
+                <td>${i.fecha}</td>
+                <td>Vence en 1 año</td>
+                <td><span class="badge-verde" style="padding:4px 8px; border-radius:4px;">Activo</span></td>
+            </tr>
+        `).join('');
+    }
+
+    // Renderizar Tabla Asociados
+    let tbodyAsoc = document.getElementById("tablaAsociados");
+    if(tbodyAsoc) {
+        let filteredAsoc = asociados.filter(a => filtroUser === "todos" || a.usuario === filtroUser);
+        tbodyAsoc.innerHTML = filteredAsoc.map(a => `
+            <tr>
+                <td>${a.usuario}</td>
+                <td>${a.nombre}</td>
+                <td>${a.fecha}</td>
+                <td><span class="badge-amarillo" style="padding:4px 8px; border-radius:4px;">${a.estatus}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    renderizarGraficosYMetricas();
+}
+
+function renderizarGraficosYMetricas() {
+    let filtroUser = (usuarioActivo.rol === "admin" || usuarioActivo.rol === "manager") ? 
+                     document.getElementById("filtroEmpleado").value : usuarioActivo.username;
+    let filtroFecha = document.getElementById("filtroCalendarioDia").value;
+
+    let listaAct = actividades.filter(a => {
+        let matchUser = (filtroUser === "todos" || a.usuario === filtroUser);
+        let matchFecha = (!filtroFecha || a.fecha === filtroFecha);
+        return matchUser && matchFecha;
     });
 
+    // Calcular KPI's
+    let totalCarga = listaAct.length;
+    let completadas = listaAct.filter(a => a.estado === "Completada").length;
+    let horasInvertidas = listaAct.reduce((acc, curr) => acc + (curr.horas || 0), 0);
+    let porcentaje = totalCarga > 0 ? Math.round((completadas / totalCarga) * 100) : 100;
+
+    if(document.getElementById("total")) document.getElementById("total").innerText = totalCarga;
+    if(document.getElementById("horas")) document.getElementById("horas").innerText = horasInvertidas;
+    if(document.getElementById("cumplimiento")) document.getElementById("cumplimiento").innerText = porcentaje + "%";
+    if(document.getElementById("dash-pendientes")) document.getElementById("dash-pendientes").innerText = totalCarga - completadas;
+    if(document.getElementById("dash-reportes")) document.getElementById("dash-reportes").innerText = reportes.filter(r => r.estado !== 'Cerrado').length;
+
+    // Actualizar Gráficos de Indicadores Generales si existen en el DOM
+    let ctxCat = document.getElementById("categoryChart");
+    if(ctxCat) {
+        let categorias = ["Seguridad", "Infraestructura", "Ciberseguridad", "Inspecciones", "Auditorías", "Otros"];
+        let conteo = categorias.map(c => listaAct.filter(a => a.categoria === c).length);
+        if (myCategoryChart) myCategoryChart.destroy();
+        myCategoryChart = new Chart(ctxCat, {
+            type: 'doughnut',
+            data: { labels: categorias, datasets: [{ data: conteo, backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#6b7280'] }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    let ctxComp = document.getElementById("complianceChart");
+    if(ctxComp) {
+        if (myComplianceChart) myComplianceChart.destroy();
+        myComplianceChart = new Chart(ctxComp, {
+            type: 'bar',
+            data: { labels: ["Completadas", "Pendientes/Proceso"], datasets: [{ label: 'Actividades', data: [completadas, totalCarga - completadas], backgroundColor: ['#10b981', '#f59e0b'] }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    // Gráfico de Accidentabilidad Comparativa entre Empresas
     let ctxAcc = document.getElementById("accidentabilidadEmpresasChart");
     if(ctxAcc) {
-        let horasNotions = accidentabilidadMaestra.notions.accidentes > 0 ? 0 : accidentabilidadMaestra.notions.dias * accidentabilidadMaestra.notions.colaboradores * accidentabilidadMaestra.notions.jornada;
-        let horasNow = accidentabilidadMaestra.now.accidentes > 0 ? 0 : accidentabilidadMaestra.now.dias * accidentabilidadMaestra.now.colaboradores * accidentabilidadMaestra.now.jornada;
-        let horasGtg = accidentabilidadMaestra.gtg.accidentes > 0 ? 0 : accidentabilidadMaestra.gtg.dias * accidentabilidadMaestra.gtg.colaboradores * accidentabilidadMaestra.gtg.jornada;
+        let hNotions = accidentabilidadMaestra.notions.dias * accidentabilidadMaestra.notions.colaboradores * accidentabilidadMaestra.notions.jornada;
+        let hNow = accidentabilidadMaestra.now.dias * accidentabilidadMaestra.now.colaboradores * accidentabilidadMaestra.now.jornada;
+        let hGtg = accidentabilidadMaestra.gtg.dias * accidentabilidadMaestra.gtg.colaboradores * accidentabilidadMaestra.gtg.jornada;
 
         if (myAccidentabilidadChart) myAccidentabilidadChart.destroy();
         myAccidentabilidadChart = new Chart(ctxAcc, {
@@ -1379,489 +1233,20 @@ function renderModuloVisualAccidentabilidad() {
             data: {
                 labels: ["Notions Dominicana", "Now Logistics", "GTG"],
                 datasets: [{
-                    label: 'Horas Proyectadas de Seguridad',
-                    data: [horasNotions, horasNow, horasGtg],
-                    backgroundColor: [
-                        accidentabilidadMaestra.notions.accidentes > 0 ? '#ef4444' : '#2563eb', 
-                        accidentabilidadMaestra.now.accidentes > 0 ? '#ef4444' : '#3b82f6', 
-                        accidentabilidadMaestra.gtg.accidentes > 0 ? '#ef4444' : '#1e293b'
-                    ],
-                    borderRadius: 6
+                    label: 'Horas Hombre Sin Accidentes acumuladas',
+                    data: [hNotions, hNow, hGtg],
+                    backgroundColor: ['#0f172a', '#2563eb', '#10b981']
                 }]
             },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
-        });
-    }
-}
-
-/* INDUCCIONES */
-function adaptarFormularioInduccion(tipo) {
-    let contenedorDinamico = document.getElementById("campos-dinamicos-induccion");
-    if (tipo === "Contratista") {
-        contenedorDinamico.innerHTML = `<div><label>Empresa Contratista</label><input id="ind_empresa" required placeholder="Nombre de la empresa contratista"></div>`;
-    } else {
-        contenedorDinamico.innerHTML = `<div><label>Motivo de la Visita o Área Interna</label><input id="ind_empresa" required placeholder="Ej: Inspección Técnica / Planta 1"></div>`;
-    }
-}
-
-async function guardarInduccion(e) {
-    e.preventDefault();
-    const payload = {
-        tipo: document.getElementById("ind_tipo").value,
-        nombre: document.getElementById("ind_nombre").value.trim(),
-        documento: document.getElementById("ind_documento").value.trim(),
-        fecha: document.getElementById("ind_fecha").value,
-        empresa: document.getElementById("ind_empresa").value.trim()
-    };
-
-    const { error } = await supabase.from('inducciones').insert([payload]);
-    if (error) {
-        alert("Error de inserción: " + error.message);
-    } else {
-        document.getElementById("induccionForm").reset();
-        adaptarFormularioInduccion("Contratista");
-        await cargarDatosDesdeSupabase();
-    }
-}
-
-function renderInducciones() {
-    let tbody = document.getElementById("tablaInducciones");
-    if(!tbody) return;
-    tbody.innerHTML = "";
-    let hoyStr = obtenerFechaHoyLocal();
-
-    inducciones.forEach((ind) => {
-        let dateObj = new Date(ind.fecha + "T00:00:00");
-        dateObj.setFullYear(dateObj.getFullYear() + 1);
-        let yyyy = dateObj.getFullYear();
-        let mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-        let dd = String(dateObj.getDate()).padStart(2, '0');
-        let fechaVenc = `${yyyy}-${mm}-${dd}`;
-
-        let esVencido = hoyStr > fechaVenc;
-        let badgeClase = esVencido ? "badge-rojo" : "badge-verde";
-        let estatusTexto = esVencido ? "❌ Vencido" : "✅ Vigente";
-
-        tbody.innerHTML += `
-        <tr>
-            <td>${ind.tipo === 'Contratista' ? '👷' : '👤'} ${ind.tipo}</td>
-            <td><strong>${ind.nombre}</strong></td>
-            <td>${ind.documento} <br><small style="color:gray;">${ind.empresa}</small></td>
-            <td>SST General</td>
-            <td>📅 ${ind.fecha}</td>
-            <td style="font-weight:600; color:${esVencido ? '#b91c1c':'#15803d'}">📅 ${fechaVenc}</td>
-            <td><span class="${badgeClase}" style="padding:4px 10px; border-radius:12px; font-size:12px; font-weight:bold;">${estatusTexto}</span></td>
-            <td><button class="btn-delete" onclick="eliminarInduccion(${ind.id})">🗑️ Eliminar</button></td>
-        </tr>`;
-    });
-}
-
-async function eliminarInduccion(id) {
-    if(confirm("¿Desea dar de baja esta credencial de inducción en la nube?")) {
-        const { error } = await supabase.from('inducciones').delete().eq('id', id);
-        if(!error) await cargarDatosDesdeSupabase();
-    }
-}
-
-function exportarInduccionesExcel() {
-    let csv = "Tipo Personal,Nombre,Identificacion,Empresa o Motivo,Fecha Induccion\n";
-    inducciones.forEach(ind => {
-        csv += `"${ind.tipo}","${ind.nombre}","${ind.documento}","${ind.empresa}","${ind.fecha}"\n`;
-    });
-    descargarCSV(csv, "Control_Vigencias_Inducciones_SST.csv");
-}
-
-/* ACTIVIDADES */
-function render(){
-    let tabla = document.getElementById("tabla");
-    let tablaHistorial = document.getElementById("tablaHistorial");
-    if(!tabla) return;
-    tabla.innerHTML = ""; tablaHistorial.innerHTML = "";
-
-    let horasDiaActividades = 0, okDia = 0, conteoActividadesDia = 0, pendientesDia = 0;
-    let filtro = getFiltroUsuario();
-    let filtroDia = document.getElementById("filtroCalendarioDia").value;
-    let hoyStr = obtenerFechaHoyLocal();
-
-    let indicadorDashboard = document.getElementById("dashboard-date-indicator");
-    if(indicadorDashboard) {
-        if (filtroDia === hoyStr) {
-            indicadorDashboard.innerText = `⏱️ Mostrando métricas del día de hoy (${filtroDia})`;
-        } else if (filtroDia) {
-            indicadorDashboard.innerText = `🔍 Trazabilidad activa para el día: ${filtroDia}`;
-        } else {
-            indicadorDashboard.innerText = `📋 Mostrando acumulado histórico total`;
-        }
-    }
-
-    actividades.forEach((a) => {
-        let h1 = a.hora_inicio.split(":"); let h2 = a.hora_fin.split(":");
-        let calculoHoras = (parseInt(h2[0]) + h2[1]/60) - (parseInt(h1[0]) + h1[1]/60);
-        if(calculoHoras < 0) calculoHoras = 0;
-
-        let pasaFiltroUsuario = (filtro === "todos" || a.asignar_a === filtro);
-        let coincideConFechaFiltro = (!filtroDia || a.fecha === filtroDia);
-
-        if (pasaFiltroUsuario && coincideConFechaFiltro) {
-            horasDiaActividades += calculoHoras;
-            conteoActividadesDia++;
-            if(a.estado === "Completada") okDia++;
-            if(a.estado === "Pendiente" || a.estado === "En proceso") pendientesDia++;
-        }
-
-        let claseEstado = a.estado === "Pendiente" ? "badge-rojo" : a.estado === "En proceso" ? "badge-amarillo" : "badge-verde";
-        let deshabilitarControl = (usuarioActivo.rol !== "admin" && a.asignar_a !== usuarioActivo.username) ? "disabled" : "";
-        let nombreDisplay = USUARIOS_VALIDOS[a.asignar_a] ? USUARIOS_VALIDOS[a.asignar_a].nombre : "Desconocido";
-
-        if (pasaFiltroUsuario && coincideConFechaFiltro) {
-            tabla.innerHTML += `
-            <tr>
-                <td style="font-weight:600;">👤 ${nombreDisplay}</td>
-                <td>${a.titulo}</td>
-                <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:6px; font-size:13px;">${a.categoria}</span></td>
-                <td>📅 ${a.fecha}</td>
-                <td style="font-weight:600;">⏱️ ${calculoHoras.toFixed(2)}h</td>
-                <td>
-                    <select class="${claseEstado}" onchange="cambiarEstadoActividad(${a.id}, this.value)" ${deshabilitarControl}>
-                        <option value="Pendiente" ${a.estado === "Pendiente" ? "selected" : ""}>⚠️ Pendiente</option>
-                        <option value="En proceso" ${a.estado === "En proceso" ? "selected" : ""}>🔄 En proceso</option>
-                        <option value="Completada" ${a.estado === "Completada" ? "selected" : ""}>✅ Completada</option>
-                    </select>
-                </td>
-                <td><button class="btn-delete" onclick="eliminarActividad(${a.id})" ${deshabilitarControl}>🗑️ Borrar</button></td>
-            </tr>`;
-        }
-
-        if (pasaFiltroUsuario) {
-            tablaHistorial.innerHTML += `
-            <tr>
-                <td>👤 ${nombreDisplay}</td>
-                <td>${a.titulo}</td>
-                <td>${a.categoria}</td>
-                <td>📅 ${a.fecha}</td>
-                <td style="font-weight:600;">⏱️ ${calculoHoras.toFixed(2)}h</td>
-                <td>
-                    <select class="${claseEstado}" onchange="cambiarEstadoActividad(${a.id}, this.value)" ${deshabilitarControl}>
-                        <option value="Pendiente" ${a.estado === "Pendiente" ? "selected" : ""}>⚠️ Pendiente</option>
-                        <option value="En proceso" ${a.estado === "En proceso" ? "selected" : ""}>🔄 En proceso</option>
-                        <option value="Completada" ${a.estado === "Completada" ? "selected" : ""}>✅ Completada</option>
-                    </select>
-                </td>
-                <td><button class="btn-delete" onclick="eliminarActividad(${a.id})" ${deshabilitarControl}>🗑️ Borrar</button></td>
-            </tr>`;
-        }
-    });
-
-    let horasDiaAsociados = 0;
-    let conteoAsociadosDia = 0;
-    asociados.forEach(asoc => {
-        if (filtro !== "todos" && asoc.asignar_a !== filtro) return;
-        if (!filtroDia || asoc.fecha === filtroDia) {
-            let h1 = asoc.hora_inicio.split(":"); let h2 = asoc.hora_fin.split(":");
-            let hs = (parseInt(h2[0]) + h2[1]/60) - (parseInt(h1[0]) + h1[1]/60);
-            horasDiaAsociados += hs > 0 ? hs : 0;
-            conteoAsociadosDia++;
-        }
-    });
-
-    let granTotalHorasDia = horasDiaActividades + horasDiaAsociados;
-    let granTotalCargaObjetos = conteoActividadesDia + conteoAsociadosDia;
-
-    let reportesAbiertosConteo = reportes.filter(r => {
-        if (filtro !== "todos" && r.encargado_hse !== filtro) return false;
-        return r.estado === "Abierto" || r.estado === "En proceso";
-    }).length;
-
-    document.getElementById("total").innerText = granTotalCargaObjetos;
-    document.getElementById("horas").innerText = granTotalHorasDia.toFixed(2) + " hrs";
-    document.getElementById("cumplimiento").innerText = conteoActividadesDia ? (okDia / conteoActividadesDia * 100).toFixed(0) + "%" : "100%";
-    document.getElementById("dash-pendientes").innerText = pendientesDia;
-    document.getElementById("dash-reportes").innerText = reportesAbiertosConteo;
-}
-
-async function cambiarEstadoActividad(id, nuevoEstado) { 
-    const { error } = await supabase.from('actividades').update({ estado: nuevoEstado }).eq('id', id);
-    if(!error) await cargarDatosDesdeSupabase();
-}
-
-async function eliminarActividad(id) { 
-    if(confirm("⚠️ ¿Estás seguro de que deseas eliminar permanentemente esta actividad de la nube?")) { 
-        const { error } = await supabase.from('actividades').delete().eq('id', id);
-        if(!error) await cargarDatosDesdeSupabase();
-    } 
-}
-
-document.getElementById("actividadForm").onsubmit = async (e) => {
-    e.preventDefault();
-    let h1 = hora_inicio.value.split(":"); let h2 = hora_fin.value.split(":");
-    let horas = (parseInt(h2[0]) + h2[1]/60) - (parseInt(h1[0]) + h1[1]/60);
-    if (horas < 0) { alert("Hora incorrecta."); return; }
-
-    let asignadoA = document.getElementById("asignar_a").value || usuarioActivo.username;
-    let fechaBaseStr = fecha.value; 
-    let frec = document.getElementById("frecuencia").value;
-    let rowsToInsert = [];
-
-    if (frec === "unica") {
-        rowsToInsert.push({ asignar_a: asignadoA, titulo: titulo.value, categoria: categoria.value, fecha: fechaBaseStr, hora_inicio: hora_inicio.value, hora_fin: hora_fin.value, estado: estado.value, observacion: observacion.value, usuario_creador: usuarioActivo.username });
-    } 
-    else if (frec === "diaria") {
-        let dateObj = new Date(fechaBaseStr + "T00:00:00");
-        for (let d = 0; d < 7; d++) {
-            let yyyy = dateObj.getFullYear(); let mm = String(dateObj.getMonth() + 1).padStart(2, '0'); let dd = String(dateObj.getDate()).padStart(2, '0');
-            rowsToInsert.push({ asignar_a: asignadoA, titulo: `${titulo.value} (Día ${d+1}/7)`, categoria: categoria.value, fecha: `${yyyy}-${mm}-${dd}`, hora_inicio: hora_inicio.value, hora_fin: hora_fin.value, estado: estado.value, observacion: observacion.value, usuario_creador: usuarioActivo.username });
-            dateObj.setDate(dateObj.getDate() + 1);
-        }
-    } 
-    else if (frec === "mensual") {
-        let dateObj = new Date(fechaBaseStr + "T00:00:00");
-        for (let m = 0; m < 3; m++) {
-            let yyyy = dateObj.getFullYear(); let mm = String(dateObj.getMonth() + 1).padStart(2, '0'); let dd = String(dateObj.getDate()).padStart(2, '0');
-            rowsToInsert.push({ asignar_a: asignadoA, titulo: `${titulo.value} (Mes ${m+1}/3)`, categoria: categoria.value, fecha: `${yyyy}-${mm}-${dd}`, hora_inicio: hora_inicio.value, hora_fin: hora_fin.value, estado: estado.value, observacion: observacion.value, usuario_creador: usuarioActivo.username });
-            dateObj.setMonth(dateObj.setMonth() + 1);
-        }
-    }
-
-    const { error } = await supabase.from('actividades').insert(rowsToInsert);
-    if(!error) {
-        actividadForm.reset();
-        await cargarDatosDesdeSupabase();
-    }
-};
-
-/* REPORTES */
-function renderRep(){
-    let t = document.getElementById("tablaReportes"); if(!t) return; t.innerHTML = "";
-    let filtro = getFiltroUsuario();
-
-    reportes.forEach((r) => {
-        if (filtro !== "todos" && r.encargado_hse !== filtro) return;
-
-        let claseRep = r.estado === "Abierto" ? "badge-rojo" : r.estado === "En proceso" ? "badge-amarillo" : "badge-verde";
-        let deshabilitarSelect = (usuarioActivo.rol !== "admin" && r.encargado_hse !== usuarioActivo.username) ? "disabled" : "";
-
-        t.innerHTML += `
-        <tr>
-            <td>👤 ${USUARIOS_VALIDOS[r.encargado_hse]?.nombre || "Desconocido"}</td>
-            <td><strong>${r.titulo}</strong></td><td>📣 ${r.origen}</td><td>${r.tipo}</td><td>${r.criticidad}</td>
-            <td>
-                <select class="${claseRep}" onchange="cambiarEstadoReporte(${r.id}, this.value)" ${deshabilitarSelect}>
-                    <option value="Abierto" ${r.estado === "Abierto" ? "selected" : ""}>Abierto</option>
-                    <option value="En proceso" ${r.estado === "En proceso" ? "selected" : ""}>En proceso</option>
-                    <option value="Cerrado" ${r.estado === "Cerrado" ? "selected" : ""}>Cerrado</option>
-                </select>
-            </td>
-            <td><button class="btn-delete" onclick="eliminarReporte(${r.id})" ${deshabilitarSelect}>🗑️ Borrar</button></td>
-        </tr>`;
-    });
-}
-
-async function cambiarEstadoReporte(id, nuevoEstado) { 
-    const { error } = await supabase.from('reportes').update({ estado: nuevoEstado }).eq('id', id);
-    if(!error) await cargarDatosDesdeSupabase();
-}
-
-async function eliminarReporte(id) { 
-    if(confirm("¿Eliminar?")) { 
-        const { error } = await supabase.from('reportes').delete().eq('id', id);
-        if(!error) await cargarDatosDesdeSupabase();
-    } 
-}
-
-document.getElementById("reporteForm").onsubmit = async (e) => {
-    e.preventDefault();
-    let asignadoA = getFiltroUsuario() !== "todos" ? getFiltroUsuario() : usuarioActivo.username;
-    
-    const payload = {
-        encargado_hse: asignadoA, titulo: r_titulo.value, origen: r_origen.value,
-        tipo: r_tipo.value, criticidad: r_criticidad.value, descripcion: r_desc.value, estado: r_estado.value
-    };
-
-    const { error } = await supabase.from('reportes').insert([payload]);
-    if(!error) {
-        reporteForm.reset();
-        await cargarDatosDesdeSupabase();
-    }
-};
-
-/* ASOCIADOS */
-function renderAsociados() {
-    let tActivos = document.getElementById("tablaAsociados");
-    let tHistorialGlobal = document.getElementById("tablaAsociadosHistorialGlobal");
-    if(!tActivos) return;
-    
-    tActivos.innerHTML = ""; tHistorialGlobal.innerHTML = "";
-    let filtro = getFiltroUsuario();
-
-    asociados.forEach((asoc) => {
-        let belongsToFilter = (filtro === "todos" || asoc.asignar_a === filtro);
-        let claseEst = asoc.estatus === "En depuración" ? "badge-rojo" : asoc.estatus === "En revisión y firma" ? "badge-amarillo" : asoc.estatus === "Listo para enviar" ? "badge-azul" : "badge-verde";
-        let deshabilitarCampos = (usuarioActivo.rol !== "admin" && asoc.asignar_a !== usuarioActivo.username) ? "disabled" : "";
-        
-        let h1 = asoc.hora_inicio.split(":"); let h2 = asoc.hora_fin.split(":");
-        let calculoHoras = (parseInt(h2[0]) + h2[1]/60) - (parseInt(h1[0]) + h1[1]/60);
-        if(calculoHoras < 0) calculoHoras = 0;
-
-        if (belongsToFilter) {
-            tActivos.innerHTML += `
-            <tr>
-                <td>
-                    <select class="select-responsable-tabla" onchange="reasignarAsociado(${asoc.id}, this.value, '${asoc.usuario || asoc.asignar_a}')" ${deshabilitarCampos}>
-                        <option value="jgarcia" ${asoc.asignar_a === "jgarcia" ? "selected" : ""}>👤 Joan Garcia</option>
-                        <option value="jhilario" ${asoc.asignar_a === "jhilario" ? "selected" : ""}>👤 Jhoan Hilario</option>
-                        <option value="vtorres" ${asoc.asignar_a === "vtorres" ? "selected" : ""}>👤 Victor Torres</option>
-                        ${usuarioActivo.rol === 'admin' ? `<option value="dcumplimiento" ${asoc.asignar_a === "dcumplimiento" ? "selected" : ""}>Super Admin</option>` : ''}
-                    </select>
-                </td>
-                <td><strong>${asoc.nombre}</strong></td>
-                <td>📅 ${asoc.fecha}</td>
-                <td style="font-weight:700; color:var(--accent-blue);">⏱️ ${calculoHoras.toFixed(2)}h</td>
-                <td>
-                    <select class="${claseEst}" onchange="cambiarEstadoAsociado(${asoc.id}, this.value, '${asoc.estatus}', ${JSON.stringify(asoc.bitacora).replace(/"/g, '&quot;')})" ${deshabilitarCampos}>
-                        <option value="En depuración" ${asoc.estatus === "En depuración" ? "selected" : ""}>🔍 En depuración</option>
-                        <option value="En revisión y firma" ${asoc.estatus === "En revisión y firma" ? "selected" : ""}>✍️ En revisión y firma</option>
-                        <option value="Listo para enviar" ${asoc.estatus === "Listo para enviar" ? "selected" : ""}>📦 Listo para enviar</option>
-                        <option value="Enviado" ${asoc.estatus === "Enviado" ? "selected" : ""}>🚀 Enviado</option>
-                    </select>
-                </td>
-                <td><button class="btn-delete" onclick="eliminarAsociado(${asoc.id})" ${deshabilitarCampos}>🗑️ Borrar</button></td>
-            </tr>`;
-        }
-
-        let logsHTML = (asoc.bitacora || []).map(h => `<div class="log-item">⏱️ <strong>${h.fecha}</strong> - ${h.detalle}</div>`).join("");
-        if(!logsHTML) logsHTML = `<em style="color:gray; font-size:12px;">Sin movimientos</em>`;
-        let respNombre = USUARIOS_VALIDOS[asoc.asignar_a]?.nombre || "Desconocido";
-
-        tHistorialGlobal.innerHTML += `
-        <tr>
-            <td style="font-weight:600; color:var(--sidebar-bg);">👤 ${respNombre}</td>
-            <td><strong>${asoc.nombre}</strong></td>
-            <td style="font-weight:600;">⏱️ ${calculoHoras.toFixed(2)}h</td>
-            <td><span class="${claseEst}" style="padding:4px 10px; border-radius:12px; font-size:13px; font-weight:700;">${asoc.estatus}</span></td>
-            <td><div class="log-box">${logsHTML}</div></td>
-        </tr>`;
-    });
-}
-
-async function cambiarEstadoAsociado(id, nuevoEst, viejoEst, bitacoraExistente) {
-    let nuevaBitacora = bitacoraExistente || [];
-    nuevaBitacora.push({ fecha: new Date().toLocaleString(), detalle: `Cambió estatus de [${viejoEst}] a [${nuevoEst}] (Por: ${usuarioActivo.nombre})` });
-    
-    const { error } = await supabase.from('asociados').update({ estatus: nuevoEst, bitacora: nuevaBitacora }).eq('id', id);
-    if(!error) await cargarDatosDesdeSupabase();
-}
-
-async function reasignarAsociado(id, nuevoResponsable, viejoResp) {
-    let bitacora = asociados.find(a => a.id === id)?.bitacora || [];
-    bitacora.push({ fecha: new Date().toLocaleString(), detalle: `Traspasado desde [${USUARIOS_VALIDOS[viejoResp]?.nombre || 'Admin'}] hacia [${USUARIOS_VALIDOS[nuevoResponsable].nombre}]` });
-    
-    const { error } = await supabase.from('asociados').update({ asignar_a: nuevoResponsable, bitacora: bitacora }).eq('id', id);
-    if(!error) await cargarDatosDesdeSupabase();
-}
-
-async function eliminarAsociado(id) { if(confirm("¿Eliminar?")) { const { error } = await supabase.from('asociados').delete().eq('id', id); if(!error) await cargarDatosDesdeSupabase(); } }
-
-async function guardarAsociado(e) {
-    e.preventDefault();
-    let h1 = asoc_hora_inicio.value.split(":"); let h2 = asoc_hora_fin.value.split(":");
-    let horasAsoc = (parseInt(h2[0]) + h2[1]/60) - (parseInt(h1[0]) + h1[1]/60);
-    if (horasAsoc < 0) { alert("La hora de fin no puede ser menor."); return; }
-    let asignadoA = document.getElementById("asoc_asignar_a").value || usuarioActivo.username;
-    
-    const payload = {
-        asignar_a: asignadoA, nombre: asoc_nombre.value, estatus: asoc_estatus.value, fecha: asoc_fecha.value,
-        hora_inicio: asoc_hora_inicio.value, hora_fin: asoc_hora_fin.value,
-        bitacora: [{ fecha: new Date().toLocaleString(), detalle: `Alta de registro (${horasAsoc.toFixed(2)} hrs de gestión). Asignado a: ${USUARIOS_VALIDOS[asignadoA].nombre}` }]
-    };
-
-    const { error } = await supabase.from('asociados').insert([payload]);
-    if(!error) {
-        asociadoForm.reset();
-        await cargarDatosDesdeSupabase();
-    }
-}
-
-/* EXPORTS */
-function descargarCSV(contenido, nombreArchivo) {
-    let csvContent = "data:text/csv;charset=utf-8,\uFEFF" + contenido;
-    let encodedUri = encodeURI(csvContent);
-    let link = document.createElement("a");
-    link.setAttribute("href", encodedUri); link.setAttribute("download", nombreArchivo);
-    document.body.appendChild(link); link.click(); document.body.removeChild(link);
-}
-
-function exportarActividadesExcel() {
-    let filtro = getFiltroUsuario(); let filtroDia = document.getElementById("filtroCalendarioDia").value;
-    let csv = "Responsable,Titulo de Actividad,Categoria,Fecha,Estado\n";
-    actividades.forEach(a => {
-        if (filtro !== "todos" && a.asignar_a !== filtro) return;
-        if (filtroDia && a.fecha !== filtroDia) return;
-        let nombre = USUARIOS_VALIDOS[a.asignar_a]?.nombre || "Desconocido";
-        csv += `"${nombre}","${a.titulo}","${a.categoria}","${a.fecha}","${a.estado}"\n`;
-    });
-    descargarCSV(csv, `Reporte_Actividades_${filtroDia || 'General'}.csv`);
-}
-
-function exportarReportesExcel() {
-    let filtro = getFiltroUsuario();
-    let csv = "Encargado HSE,Anomalia,Reportado Por,Area,Criticidad,Estatus\n";
-    reportes.forEach(r => {
-        if (filtro !== "todos" && r.encargado_hse !== filtro) return;
-        let nombre = USUARIOS_VALIDOS[r.encargado_hse]?.nombre || "Desconocido";
-        csv += `"${nombre}","${r.titulo}","${r.origen}","${r.tipo}","${r.criticidad}","${r.estado}"\n`;
-    });
-    descargarCSV(csv, "Mesa_de_Control_Reportes.csv");
-}
-
-function exportarAsociadosExcel() {
-    let filtro = getFiltroUsuario();
-    let csv = "Responsable,Asociado o Proveedor,Fecha Registro,Estatus Actual\n";
-    asociados.forEach(asoc => {
-        if (filtro !== "todos" && asoc.asignar_a !== filtro) return;
-        let nombre = USUARIOS_VALIDOS[asoc.asignar_a]?.nombre || "Desconocido";
-        csv += `"${nombre}","${asoc.nombre}","${asoc.fecha}","${asoc.estatus}"\n`;
-    });
-    descargarCSV(csv, "Control_Asociados_Negocio.csv");
-}
-
-/* GRÁFICAS */
-function updateCharts() {
-    if (!usuarioActivo) return;
-    let filtro = getFiltroUsuario();
-    let filtroDia = document.getElementById("filtroCalendarioDia") ? document.getElementById("filtroCalendarioDia").value : "";
-
-    let listaFiltrada = actividades.filter(a => {
-        if(filtroDia && a.fecha !== filtroDia) return false;
-        return filtro === "todos" || a.asignar_a === filtro;
-    });
-
-    let categorias = ["Seguridad", "Infraestructura", "Ciberseguridad", "Inspecciones", "Auditorías", "Otros"];
-    let conteoCategorias = categorias.map(cat => listaFiltrada.filter(a => a.categoria === cat).length);
-    let completadas = listaFiltrada.filter(a => a.estado === "Completada").length;
-    let pendientesEnProceso = listaFiltrada.length - completadas;
-
-    let ctxCat = document.getElementById("categoryChart");
-    if(ctxCat) {
-        if (myCategoryChart) myCategoryChart.destroy();
-        myCategoryChart = new Chart(ctxCat, {
-            type: 'doughnut',
-            data: { labels: categorias, datasets: [{ data: conteoCategorias, backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#6b7280'] }] },
             options: { responsive: true, maintainAspectRatio: false }
         });
     }
-    let ctxComp = document.getElementById("complianceChart");
-    if(ctxComp) {
-        if (myComplianceChart) myComplianceChart.destroy();
-        myComplianceChart = new Chart(ctxComp, {
-            type: 'bar',
-            data: { labels: ["Completadas", "Pendientes/Proceso"], datasets: [{ label: 'Actividades', data: [completadas, pendientesEnProceso], backgroundColor: ['#10b981', '#f59e0b'] }] },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
-    }
-    renderModuloVisualAccidentabilidad();
 }
 
-verificarSesion();
+// Arranque inicial automático
+window.onload = function() {
+    verificarSesion();
+};
 </script>
 </body>
 </html>
