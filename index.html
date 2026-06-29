@@ -1034,11 +1034,14 @@ table select {
     </div>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script type="module">
+// 1. Importar las librerías oficiales desde el CDN de Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+    getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, setDoc, updateDoc, getDoc, deleteDoc 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-<script>
-// 1. CONFIGURACIÓN DE TU PROYECTO CONTROL DE CUMPLIMIENTO
+// 2. Tus credenciales de configuración de 'Control de Cumplimiento'
 const firebaseConfig = {
   apiKey: "AIzaSyDTDaGLwcLTDBI2vMz-8piMVADZOhRrFic",
   authDomain: "control-cumplimiento.firebaseapp.com",
@@ -1049,12 +1052,12 @@ const firebaseConfig = {
   measurementId: "G-M9EV6F5YTE"
 };
 
-// Inicializar la conexión a la Nube
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// Inicializar la aplicación y la base de datos
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-// 2. ROLES CORREGIDOS E HISTORIAL DE USUARIOS
-let USUARIOS_VALIDOS = JSON.parse(localStorage.getItem("app_usuarios")) || { 
+// 3. Variables de Usuarios e Historial (Tus roles de SST corregidos)
+let USUARIOS_VALIDOS = { 
     "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Super Administrador" }, 
     "jgarcia": { clave: "1234", rol: "inspector", nombre: "Joan Garcia" }, 
     "jhilario": { clave: "1234", rol: "coordinador", nombre: "Jhoan Hilario" }, 
@@ -1072,7 +1075,7 @@ const SABIAS_QUE_DATOS = [
 
 let usuarioActivo = JSON.parse(sessionStorage.getItem("sesion_usuario")) || null;
 
-// Estructuras de datos dinámicas sincronizadas en tiempo real con Firebase
+// Estructuras principales de datos en tiempo real
 let actividades = [];
 let reportes = [];
 let asociados = [];
@@ -1087,37 +1090,37 @@ let myCategoryChart = null;
 let myComplianceChart = null;
 let myAccidentabilidadChart = null;
 
-// Escuchadores en tiempo real (Sustituyen por completo al antiguo localStorage local)
+// Escuchadores de datos de la Nube (Sincronizan todo tu equipo al instante)
 function iniciarSincronizacionFirestore() {
-    db.collection("actividades").onSnapshot((snapshot) => {
+    onSnapshot(collection(db, "actividades"), (snapshot) => {
         actividades = [];
         snapshot.forEach((doc) => { actividades.push({ id: doc.id, ...doc.data() }); });
         ejecutarFiltroGlobal();
     });
 
-    db.collection("reportes").onSnapshot((snapshot) => {
+    onSnapshot(collection(db, "reportes"), (snapshot) => {
         reportes = [];
         snapshot.forEach((doc) => { reportes.push({ id: doc.id, ...doc.data() }); });
         ejecutarFiltroGlobal();
     });
 
-    db.collection("asociados").onSnapshot((snapshot) => {
+    onSnapshot(collection(db, "asociados"), (snapshot) => {
         asociados = [];
         snapshot.forEach((doc) => { asociados.push({ id: doc.id, ...doc.data() }); });
         ejecutarFiltroGlobal();
     });
 
-    db.collection("inducciones").onSnapshot((snapshot) => {
+    onSnapshot(collection(db, "inducciones"), (snapshot) => {
         inducciones = [];
         snapshot.forEach((doc) => { inducciones.push({ id: doc.id, ...doc.data() }); });
         ejecutarFiltroGlobal();
     });
 
-    db.collection("accidentabilidad").doc("master").onSnapshot((doc) => {
-        if (doc.exists) {
-            accidentabilidadMaestra = doc.data();
+    onSnapshot(doc(db, "accidentabilidad", "master"), (documento) => {
+        if (documento.exists()) {
+            accidentabilidadMaestra = documento.data();
         } else {
-            db.collection("accidentabilidad").doc("master").set(accidentabilidadMaestra);
+            setDoc(doc(db, "accidentabilidad", "master"), accidentabilidadMaestra);
         }
         ejecutarFiltroGlobal();
     });
@@ -1234,7 +1237,7 @@ function showSection(id){
     if(menuMap[id]) document.getElementById(menuMap[id]).classList.add("active-menu");
 }
 
-// 3. ENVÍOS DIRECTOS DE FORMULARIOS A FIRESTORE
+// 4. GUARDADO DE REGISTROS DIRECTOS A FIRESTORE
 document.getElementById("actividadForm").addEventListener("submit", function(e) {
     e.preventDefault();
     let respInput = document.getElementById("asignar_a").value;
@@ -1252,7 +1255,7 @@ document.getElementById("actividadForm").addEventListener("submit", function(e) 
     };
 
     if(nuevaAct.frecuencia === "unica") {
-        db.collection("actividades").add(nuevaAct);
+        addDoc(collection(db, "actividades"), nuevaAct);
     } else if(nuevaAct.frecuencia === "diaria") {
         let fechaBase = new Date(nuevaAct.fecha + 'T00:00:00');
         for(let i=0; i<7; i++) {
@@ -1260,7 +1263,7 @@ document.getElementById("actividadForm").addEventListener("submit", function(e) 
             let d = new Date(fechaBase);
             d.setDate(d.getDate() + i);
             copia.fecha = d.toISOString().split('T')[0];
-            db.collection("actividades").add(copia);
+            addDoc(collection(db, "actividades"), copia);
         }
     } else if(nuevaAct.frecuencia === "mensual") {
         let fechaBase = new Date(nuevaAct.fecha + 'T00:00:00');
@@ -1269,7 +1272,7 @@ document.getElementById("actividadForm").addEventListener("submit", function(e) 
             let d = new Date(fechaBase);
             d.setMonth(d.getMonth() + i);
             copia.fecha = d.toISOString().split('T')[0];
-            db.collection("actividades").add(copia);
+            addDoc(collection(db, "actividades"), copia);
         }
     }
     this.reset();
@@ -1286,7 +1289,7 @@ document.getElementById("reporteForm").addEventListener("submit", function(e) {
         desc: document.getElementById("r_desc").value,
         estado: document.getElementById("r_estado").value
     };
-    db.collection("reportes").add(nuevoRep);
+    addDoc(collection(db, "reportes"), nuevoRep);
     this.reset();
 });
 
@@ -1302,11 +1305,11 @@ document.getElementById("asociadoForm").addEventListener("submit", function(e) {
         hora_fin: document.getElementById("asoc_hora_fin").value,
         historialLog: [`Registrado inicialmente como [${document.getElementById("asoc_estatus").value}] por ${usuarioActivo.nombre} el ${obtenerFechaHoyLocal()}`]
     };
-    db.collection("asociados").add(nuevoAsoc);
+    addDoc(collection(db, "asociados"), nuevoAsoc);
     this.reset();
 });
 
-function guardarInduccion(e) {
+document.getElementById("induccionForm").addEventListener("submit", function(e) {
     e.preventDefault();
     let deVence = new Date(document.getElementById("ind_fecha").value + 'T00:00:00');
     deVence.setFullYear(deVence.getFullYear() + 1);
@@ -1320,12 +1323,12 @@ function guardarInduccion(e) {
         vencimiento: fVence,
         empresa: document.getElementById("ind_tipo").value === "Contratista" ? document.getElementById("ind_empresa").value : "N/A"
     };
-    db.collection("inducciones").add(nuevaInd);
-    document.getElementById("induccionForm").reset();
+    addDoc(collection(db, "inducciones"), nuevaInd);
+    this.reset();
     adaptarFormularioInduccion("Contratista");
-}
+});
 
-function guardarDatosAccidentabilidad(e) {
+document.getElementById("accidentabilidadForm").addEventListener("submit", function(e) {
     e.preventDefault();
     let emp = document.getElementById("acc_empresa_selector").value;
     accidentabilidadMaestra[emp] = {
@@ -1336,65 +1339,64 @@ function guardarDatosAccidentabilidad(e) {
         recordAnterior: parseInt(document.getElementById("acc_record_anterior").value) || 0,
         accidentes: parseInt(document.getElementById("acc_accidentes_periodo").value) || 0
     };
-    db.collection("accidentabilidad").doc("master").set(accidentabilidadMaestra).then(() => {
-        alert("Pizarra de accidentabilidad actualizada en Firebase.");
+    setDoc(doc(db, "accidentabilidad", "master"), accidentabilidadMaestra).then(() => {
+        alert("Pizarra de accidentabilidad actualizada globalmente.");
     });
-}
+});
 
-// 4. FUNCIONES DE ELIMINACIÓN Y ACTUALIZACIÓN CENTRALIZADAS
-function eliminarActividad(id) {
-    if(confirm("¿Seguro que deseas eliminar esta actividad?")) {
-        db.collection("actividades").doc(id).delete();
+// 5. FUNCIONES QUE SE EXPORTAN A LA VENTANA (WINDOW) PARA LAS TABLAS E INTERFAZ HTML
+window.eliminarActividad = function(id) {
+    if(confirm("¿Seguro que deseas eliminar esta actividad de la nube?")) {
+        deleteDoc(doc(db, "actividades", id));
     }
 }
-
-function cambiarEstadoActividadTabla(id, nuevoEstado) {
-    db.collection("actividades").doc(id).update({ estado: nuevoEstado });
+window.cambiarEstadoActividadTabla = function(id, nuevoEstado) {
+    updateDoc(doc(db, "actividades", id), { estado: nuevoEstado });
 }
-
-function cambiarResponsableActividadTabla(id, nuevoResp) {
-    db.collection("actividades").doc(id).update({ usuario: nuevoResp });
+window.cambiarResponsableActividadTabla = function(id, nuevoResp) {
+    updateDoc(doc(db, "actividades", id), { usuario: nuevoResp });
 }
-
-function eliminarReporte(id) {
+window.eliminarReporte = function(id) {
     if(confirm("¿Eliminar reporte permanentemente?")) {
-        db.collection("reportes").doc(id).delete();
+        deleteDoc(doc(db, "reportes", id));
     }
 }
-
-function cambiarEstadoReporteTabla(id, nuevoEst) {
-    db.collection("reportes").doc(id).update({ estado: nuevoEst });
+window.cambiarEstadoReporteTabla = function(id, nuevoEst) {
+    updateDoc(doc(db, "reportes", id), { estado: nuevoEst });
 }
-
-function eliminarAsociado(id) {
+window.eliminarAsociado = function(id) {
     if(confirm("¿Eliminar asociado permanentemente?")) {
-        db.collection("asociados").doc(id).delete();
+        deleteDoc(doc(db, "asociados", id));
     }
 }
-
-function cambiarEstatusAsociadoTabla(id, nuevoEst) {
-    let asocRef = db.collection("asociados").doc(id);
-    asocRef.get().then((doc) => {
-        if(doc.exists) {
-            let datos = doc.data();
+window.cambiarEstatusAsociadoTabla = function(id, nuevoEst) {
+    let docRef = doc(db, "asociados", id);
+    getDoc(docRef).then((documento) => {
+        if(documento.exists()) {
+            let datos = documento.data();
             let historial = datos.historialLog || [];
             historial.push(`Cambio de estatus a [${nuevoEst}] por ${usuarioActivo.nombre} el ${obtenerFechaHoyLocal()}`);
-            asocRef.update({ estatus: nuevoEst, historialLog: historial });
+            updateDoc(docRef, { estatus: nuevoEst, historialLog: historial });
         }
     });
 }
-
-// 5. FUNCIONES DE RENDERIZADO VISUAL ORIGINALES CON MÁXIMO DETALLE
-function cambiarResponsableAsociadoTabla(id, nuevoResp) {
-    db.collection("asociados").doc(id).update({ usuario: nuevoResp });
+window.cambiarResponsableAsociadoTabla = function(id, nuevoResp) {
+    updateDoc(doc(db, "asociados", id), { usuario: nuevoResp });
 }
-
-function eliminarInduccion(id) {
+window.eliminarInduccion = function(id) {
     if(confirm("¿Eliminar registro de inducción?")) {
-        db.collection("inducciones").doc(id).delete();
+        deleteDoc(doc(db, "inducciones", id));
     }
 }
+window.showSection = showSection;
+window.logout = logout;
+window.adaptarFormularioInduccion = adaptarFormularioInduccion;
+window.cambiarTemaApp = cambiarTemaApp;
+window.exportarActividadesExcel = exportarActividadesExcel;
+window.cargarEmpresaAccidentabilidad = cargarEmpresaAccidentabilidad;
+window.ejecutarFiltroGlobal = ejecutarFiltroGlobal;
 
+// 6. FUNCIONES DE RENDERS Y GRÁFICOS ORIGINALES
 function render() {
     let tbody = document.getElementById("tablaActividades");
     if(!tbody) return;
@@ -1586,7 +1588,6 @@ function renderModuloVisualAccidentabilidad() {
 
         let tarjeta = document.createElement("div");
         tarjeta.className = "card-acc-pizarra";
-        
         let colorFondoDias = d.dias >= d.recordAnterior && d.recordAnterior > 0 ? "#dcfce7" : "#fff";
 
         tarjeta.innerHTML = `
@@ -1657,7 +1658,6 @@ function updateCharts() {
     }
 }
 
-// 6. ADAPTACIONES MENORES DE CONFIGURACIÓN Y EXCEL
 function adaptarFormularioInduccion(valor) {
     let divEmpresa = document.getElementById("div_ind_empresa");
     if(divEmpresa) {
@@ -1676,14 +1676,14 @@ function cambiarTemaApp(tema) {
 
 function cargarPreferenciasUsuarioActivo() {
     let t = localStorage.getItem("app_tema_preferido") || "default";
-    document.getElementById("config_tema_selector").value = t;
+    const selectTema = document.getElementById("config_tema_selector");
+    if (selectTema) selectTema.value = t;
     cambiarTemaApp(t);
 }
 
 function exportarActividadesExcel() {
     let csv = [];
     let rows = document.querySelectorAll("#tablaActividades tr");
-    
     csv.push("Responsable,Actividad,Categoria,Fecha,Horario,Estado,Observacion");
     
     rows.forEach(row => {
@@ -1713,9 +1713,11 @@ function exportarActividadesExcel() {
     document.body.removeChild(link);
 }
 
-window.onload = function() {
-    verificarSesion();
-};
+// 7. Enlazar el Login e iniciar la vista
+document.getElementById("loginForm").addEventListener("submit", login);
+
+// Ejecutar verificación de sesión inmediatamente al cargar el módulo
+verificarSesion();
 </script>
 </body>
 </html>
