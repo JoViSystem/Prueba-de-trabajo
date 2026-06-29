@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control de Cumplimiento</title>
 
-<!-- Chart.js y SDK Oficial de Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -23,6 +22,7 @@
     --sec-azul: #3b82f6;
 }
 
+/* TEMAS ADICIONALES */
 body.theme-light {
     --bg-main: #f8fafc;
     --sidebar-bg: #1e293b;
@@ -47,6 +47,7 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
+/* PANTALLA LOGIN */
 .login-container {
     display: flex;
     justify-content: center;
@@ -91,6 +92,7 @@ body {
     font-weight: 500;
 }
 
+/* SIDEBAR */
 .sidebar {
     width: 280px;
     height: 100vh;
@@ -110,6 +112,9 @@ body {
     font-weight: 800;
     letter-spacing: -0.3px;
     color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .sidebar .user-box {
@@ -152,8 +157,17 @@ body {
     font-weight: 500;
 }
 
-.sidebar a:hover { background: rgba(255, 255, 255, 0.06); color: white; }
-.sidebar a.active-menu { background: var(--accent-blue); color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: white;
+}
+
+.sidebar a.active-menu {
+    background: var(--accent-blue);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
 
 .btn-logout {
     background: #451a03 !important;
@@ -163,58 +177,410 @@ body {
     border: 1px solid #7c2d12 !important;
     justify-content: center;
 }
-.btn-logout:hover { background: #7c2d12 !important; color: white !important; }
 
-.main { margin-left: 280px; padding: 40px; box-sizing: border-box; }
-h1 { font-size: 28px; font-weight: 700; color: var(--sidebar-bg); margin-top: 0; margin-bottom: 24px; }
-h2.section-title { font-size: 20px; color: var(--sidebar-bg); margin-top: 40px; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+.btn-logout:hover {
+    background: #7c2d12 !important;
+    color: white !important;
+}
 
+/* MAIN CONTENT */
+.main {
+    margin-left: 280px;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--sidebar-bg);
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+h2.section-title {
+    font-size: 20px;
+    color: var(--sidebar-bg);
+    margin-top: 40px;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+}
+
+/* FILTROS AVANZADOS */
 .admin-filter {
-    background: #fff; padding: 16px 24px; border-radius: 12px; margin-bottom: 28px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; align-items: center; gap: 16px; border-left: 5px solid var(--sec-yellow);
+    background: #fff;
+    padding: 16px 24px;
+    border-radius: 12px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-left: 5px solid var(--sec-yellow);
 }
+
 .calendar-filter-box {
-    background: #ffffff; padding: 16px 24px; border-radius: 12px; margin-bottom: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; align-items: center; gap: 14px; border-left: 5px solid var(--accent-blue);
+    background: #ffffff;
+    padding: 16px 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-left: 5px solid var(--accent-blue);
 }
-.calendar-filter-box input[type="date"] { width: auto; margin: 0; padding: 8px 12px; background: var(--bg-main); }
-.calendar-filter-box button.btn-reset-date { background: #f1f5f9; color: #475569; padding: 8px 14px; font-size: 13px; border: 1px solid #cbd5e1; }
 
+.calendar-filter-box strong {
+    color: var(--sidebar-bg);
+    font-size: 15px;
+}
+
+.calendar-filter-box input[type="date"] {
+    width: auto;
+    margin: 0;
+    padding: 8px 12px;
+    background: var(--bg-main);
+}
+
+.calendar-filter-box button.btn-reset-date {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 8px 14px;
+    font-size: 13px;
+    border: 1px solid #cbd5e1;
+}
+.calendar-filter-box button.btn-reset-date:hover {
+    background: #e2e8f0;
+}
+
+.admin-filter strong {
+    color: var(--sidebar-bg);
+    font-size: 15px;
+}
+
+.admin-filter select {
+    width: 240px;
+    margin: 0;
+    padding: 10px 14px;
+    background: var(--bg-main);
+    border: 1px solid #cbd5e1;
+}
+
+/* SABÍAS QUE */
 .sabias-que-container {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #f8fafc; padding: 24px 28px;
-    border-radius: 14px; margin-top: 35px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-left: 66px solid var(--sec-yellow); position: relative;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #f8fafc;
+    padding: 24px 28px;
+    border-radius: 14px;
+    margin-top: 35px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-left: 6px solid var(--sec-yellow);
+    position: relative;
+    overflow: hidden;
 }
-.sabias-que-container h4 { margin: 0 0 8px 0; color: var(--sec-yellow); font-size: 16px; text-transform: uppercase; }
-.sabias-que-container p { margin: 0; font-size: 15px; color: #cbd5e1; }
+.sabias-que-container h4 {
+    margin: 0 0 8px 0;
+    color: var(--sec-yellow);
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.sabias-que-container p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: #cbd5e1;
+}
 
-.cards { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
-.card { background: white; padding: 20px; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); flex: 1; min-width: 180px; border-top: 4px solid var(--accent-blue); }
-.card h3 { margin: 0; font-size: 12px; text-transform: uppercase; color: #64748b; }
-.card p { font-size: 28px; font-weight: 700; margin: 10px 0 0 0; color: var(--sidebar-bg); }
+/* BOTONES DE EXPORTACIÓN */
+.export-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    justify-content: flex-start;
+}
+
+.btn-export-excel {
+    background: #10b981 !important;
+    color: white !important;
+    font-size: 13px !important;
+    padding: 8px 14px !important;
+    border-radius: 6px !important;
+}
+.btn-export-excel:hover { background: #059669 !important; }
+
+.btn-export-pdf {
+    background: #ef4444 !important;
+    color: white !important;
+    font-size: 13px !important;
+    padding: 8px 14px !important;
+    border-radius: 6px !important;
+    margin-top: 15px;
+}
+.btn-export-pdf:hover { background: #dc2626 !important; }
+
+/* INDICADORES */
+.cards {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    flex: 1;
+    min-width: 180px;
+    border-top: 4px solid var(--accent-blue);
+}
+
+.card h3 {
+    margin: 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+}
+
+.card p {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 10px 0 0 0;
+    color: var(--sidebar-bg);
+}
+
 .card.c-total { border-top-color: var(--accent-blue); }
 .card.c-horas { border-top-color: var(--sec-azul); }
 .card.c-cumplimiento { border-top-color: var(--sec-green); }
 .card.c-pendientes { border-top-color: var(--sec-yellow); }
 .card.c-reportes { border-top-color: var(--sec-red); }
 
-form { background: white; padding: 28px; border-radius: 14px; margin-top: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-.form-group-row { display: flex; gap: 15px; margin-bottom: 4px; }
-.form-group-row > div { flex: 1; }
-label { font-size: 14px; font-weight: 600; color: #475569; }
-input, select, textarea { width: 100%; padding: 12px 14px; margin: 6px 0 16px 0; font-size: 15px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box; background: #f8fafc; color: var(--text-dark); }
+/* FORMULARIOS */
+form {
+    background: white;
+    padding: 28px;
+    border-radius: 14px;
+    margin-top: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
 
-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-th { background: #1e293b; color: #f8fafc; padding: 16px; font-size: 14px; text-align: left; }
-td { padding: 16px; font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+.form-group-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 4px;
+}
 
-.btn-delete { background: #fef2f2; color: var(--sec-red); border: 1px solid #fee2e2; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-.btn-delete:hover { background: var(--sec-red); color: white; }
+.form-group-row > div {
+    flex: 1;
+}
 
+label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    margin: 6px 0 16px 0;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    box-sizing: border-box;
+    background: #f8fafc;
+    color: var(--text-dark);
+    font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+button {
+    background: var(--accent-blue);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: var(--accent-blue-hover);
+}
+
+/* TABLAS */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+th {
+    background: #1e293b;
+    color: #f8fafc;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+td {
+    padding: 16px;
+    font-size: 15px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+table select {
+    width: auto;
+    padding: 6px 12px;
+    margin: 0;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.select-responsable-tabla {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: var(--text-dark) !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+}
+
+.btn-delete {
+    background: #fef2f2;
+    color: var(--sec-red);
+    border: 1px solid #fee2e2;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-delete:hover {
+    background: var(--sec-red);
+    color: white;
+    border-color: var(--sec-red);
+}
+
+.log-box {
+    max-height: 120px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    padding: 8px;
+    border-radius: 6px;
+    background: #f8fafc;
+}
+
+.log-item {
+    font-size: 12px;
+    padding: 6px 8px;
+    background: white;
+    border-left: 3px solid var(--accent-blue);
+    margin-bottom: 4px;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.4;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+/* BADGES */
+.badge-rojo { background-color: #fee2e2 !important; color: #b91c1c !important; }
+.badge-amarillo { background-color: #fef9c3 !important; color: #a16207 !important; }
+.badge-verde { background-color: #dcfce7 !important; color: #15803d !important; }
+.badge-azul { background-color: #dbeafe !important; color: #1e40af !important; }
+
+/* SECCIONES */
 .section { display: none; }
 .active { display: block; }
 #app-content { display: none; }
-.charts-container { display: flex; gap: 24px; margin-top: 28px; flex-wrap: wrap; }
-.chart-box { background: white; padding: 24px; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); flex: 1; min-width: 320px; }
+
+.charts-container {
+    display: flex;
+    gap: 24px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+.chart-box {
+    background: white;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    flex: 1;
+    min-width: 320px;
+    max-width: 100%;
+}
+
+.chart-box h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: var(--sidebar-bg);
+    font-weight: 600;
+}
+
+.trazabilidad-banner {
+    background: #eff6ff;
+    border: 1px dashed var(--accent-blue);
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #1e40af;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+@media print {
+    .sidebar, form, .admin-filter, .calendar-filter-box, .export-bar, .btn-export-pdf, .sabias-que-container, th:nth-last-child(1), td:nth-last-child(1) {
+        display: none !important;
+    }
+    .main {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+    .card {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+    }
+    body {
+        background: white !important;
+    }
+}
 </style>
 </head>
 <body>
@@ -222,7 +588,7 @@ td { padding: 16px; font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #3
 <div id="login-screen" class="login-container">
     <div class="login-card">
         <h2>🛡️ Control de Cumplimiento</h2>
-        <p class="subtitle">Sistema de Monitoreo & Continuidad</p>
+        <p class="subtitle">Sistema de Monitoreo & Continuidad </p>
         <form id="loginForm" onsubmit="login(event)">
             <input type="text" id="username" placeholder="Usuario" required>
             <input type="password" id="password" placeholder="Contraseña" required>
@@ -232,8 +598,10 @@ td { padding: 16px; font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #3
 </div>
 
 <div id="app-content">
+
     <div class="sidebar">
         <h2>🛡️ Control de Cumplimiento</h2>
+        
         <div class="user-box">
             <img id="sidebar-avatar" src="" class="profile-img-preview" alt="Avatar" onerror="this.src='https://www.w3schools.com/howto/img_avatar.png'">
             <div class="user-info">
@@ -241,6 +609,7 @@ td { padding: 16px; font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #3
                 <span id="user-display-role" style="font-size:11px; opacity:0.8;">Rol</span>
             </div>
         </div>
+
         <a id="menu-inicio" onclick="showSection('inicio')" class="active-menu">📊 Inicio (Dashboard)</a>
         <a id="menu-actividades" onclick="showSection('actividades')">📋 Actividades</a>
         <a id="menu-reportes" onclick="showSection('reportes')">⚠️ Control de Reportes</a>
@@ -249,70 +618,137 @@ td { padding: 16px; font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #3
         <a id="menu-asociados" onclick="showSection('asociados')">🤝 Asociados de Negocios</a>
         <a id="menu-indicadores" onclick="showSection('indicadores')">📈 Indicadores</a>
         <a id="menu-configuracion" onclick="showSection('configuracion')">⚙️ Configuración</a>
+        
         <a onclick="logout()" class="btn-logout">🚪 Cerrar Sesión</a>
     </div>
 
     <div class="main">
+
         <div id="inicio" class="section active">
             <h1 id="welcome-title">Dashboard General</h1>
+
             <div id="admin-view-selector" class="admin-filter" style="display:none;">
                 <strong>🔍 Filtro de Inspección (Ver datos de):</strong>
-                <select id="filtroEmpleado" onchange="ejecutarFiltroGlobal();"></select>
+                <select id="filtroEmpleado" onchange="ejecutarFiltroGlobal();">
+                </select>
             </div>
-            <p id="dashboard-date-indicator" style="font-size:14px; font-weight:600; color:var(--accent-blue); margin-top:-15px;">⏱️ Sincronizado en Tiempo Real vía Supabase</p>
+
+            <p id="dashboard-date-indicator" style="font-size:14px; font-weight:600; color:var(--accent-blue); margin-top:-15px; margin-bottom:20px;">⏱️ Mostrando métricas del día actual</p>
+
             <div class="cards">
-                <div class="card c-total"><h3>Carga Operativa Total</h3><p id="total">0</p></div>
-                <div class="card c-horas"><h3>Horas Invertidas Hoy</h3><p id="horas">0</p></div>
-                <div class="card c-cumplimiento"><h3>Cumplimiento General</h3><p id="cumplimiento">0%</p></div>
-                <div class="card c-pendientes"><h3>Tareas Pendientes</h3><p id="dash-pendientes">0</p></div>
-                <div class="card c-reportes"><h3>Alertas / Reportes Abiertos</h3><p id="dash-reportes">0</p></div>
+                <div class="card c-total">
+                    <h3>Carga Operativa Total</h3>
+                    <p id="total">0</p>
+                </div>
+                <div class="card c-horas">
+                    <h3>Horas Invertidas Hoy</h3>
+                    <p id="horas">0</p>
+                </div>
+                <div class="card c-cumplimiento">
+                    <h3>Cumplimiento General</h3>
+                    <p id="cumplimiento">0%</p>
+                </div>
+                <div class="card c-pendientes">
+                    <h3>Tareas Pendientes</h3>
+                    <p id="dash-pendientes">0</p>
+                </div>
+                <div class="card c-reportes">
+                    <h3>Alertas / Reportes Abiertos</h3>
+                    <p id="dash-reportes">0</p>
+                </div>
             </div>
+
             <div class="sabias-que-container">
                 <h4>💡 ¿Sabías qué? - Cultura de Seguridad</h4>
                 <p id="sabias-que-texto">Cargando dato de concientización...</p>
             </div>
+
+            <button class="btn-export-pdf" style="margin-top:30px;" onclick="window.print()">📄 Exportar Reporte Ejecutivo del Día (PDF)</button>
         </div>
 
-        <!-- MÓDULO ACTIVIDADES -->
         <div id="actividades" class="section">
             <h1>📋 Gestión de Actividades de Seguridad</h1>
-            <form id="actividadForm" onsubmit="guardarActividadManual(event)">
+            
+            <form id="actividadForm" onsubmit="guardarActividadLocal(event)">
                 <input id="titulo" placeholder="Título de la actividad / Tarea de campo" required>
                 <div class="form-group-row">
                     <div>
                         <label>Categoría</label>
                         <select id="categoria">
-                            <option>Seguridad</option><option>Infraestructura</option><option>Ciberseguridad</option><option>Inspecciones</option><option>Auditorías</option><option>Otros</option>
+                            <option>Seguridad</option>
+                            <option>Infraestructura</option>
+                            <option>Ciberseguridad</option>
+                            <option>Inspecciones</option>
+                            <option>Auditorías</option>
+                            <option>Otros</option>
                         </select>
                     </div>
-                    <div><label>🎯 Asignar a:</label><select id="asignar_a"></select></div>
+                    <div>
+                        <label>🎯 Asignar a:</label>
+                        <select id="asignar_a"></select>
+                    </div>
                 </div>
+
                 <div class="form-group-row">
-                    <div><label>Fecha Inicial de la Tarea</label><input type="date" id="fecha" required></div>
+                    <div>
+                        <label>🔄 Frecuencia / Recurrencia</label>
+                        <select id="frecuencia">
+                            <option value="unica">Única (Solo este día)</option>
+                            <option value="diaria">🔁 Diaria (Generar para los próximos 7 días)</option>
+                            <option value="mensual">📅 Mensual (Generar para los próximos 3 meses)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Fecha Inicial de la Tarea</label>
+                        <input type="date" id="fecha" required>
+                    </div>
                 </div>
+
                 <div class="form-group-row">
                     <div><label>Hora Inicio</label><input type="time" id="hora_inicio" required></div>
                     <div><label>Hora Fin</label><input type="time" id="hora_fin" required></div>
                 </div>
-                <select id="estado"><option>Pendiente</option><option>En proceso</option><option>Completada</option></select>
+
+                <select id="estado">
+                    <option>Pendiente</option>
+                    <option>En proceso</option>
+                    <option>Completada</option>
+                </select>
                 <textarea id="observacion" placeholder="Observaciones de seguridad..."></textarea>
                 <button type="submit">💾 Guardar Actividad</button>
             </form>
+
             <h2 class="section-title">Actividades Planificadas</h2>
+            
             <div class="calendar-filter-box">
-                <strong>📅 Filtrar por Día Específico:</strong>
+                <strong>📅 Trazabilidad Diaria (Filtrar por Día Específico):</strong>
                 <input type="date" id="filtroCalendarioDia" onchange="ejecutarFiltroGlobal();">
+                <button type="button" class="btn-reset-date" onclick="limpiarFiltroFecha();">Ver Hoy</button>
             </div>
+
+            <div class="export-bar">
+                <button class="btn-export-excel" onclick="alert('Exportando a Excel...')">📥 Exportar Actividades a Excel</button>
+            </div>
+
             <table>
-                <thead><tr><th>Responsable</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Horas</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <thead>
+                    <tr><th>Responsable</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Horas</th><th>Estado</th><th>Acciones</th></tr>
+                </thead>
                 <tbody id="tabla"></tbody>
+            </table>
+
+            <h2 class="section-title">📂 Historial Completo de Actividades (Archivo)</h2>
+            <table>
+                <thead>
+                    <tr><th>Responsable</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Horas</th><th>Estado Final</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="tablaHistorial"></tbody>
             </table>
         </div>
 
-        <!-- MÓDULO REPORTES -->
         <div id="reportes" class="section">
             <h1>⚠️ Mesa de Control de Reportes Recibidos</h1>
-            <form id="reporteForm" onsubmit="guardarReporteManual(event)">
+            <form id="reporteForm" onsubmit="guardarReporteLocal(event)">
                 <div class="form-group-row">
                     <div><label>Título o Anomalía</label><input id="r_titulo" required></div>
                     <div><label>Reportado por</label><input id="r_origen" required></div>
@@ -331,140 +767,119 @@ td { padding: 16px; font-size: 15px; border-bottom: 1px solid #f1f5f9; color: #3
                 <select id="r_estado"><option>Abierto</option><option>En proceso</option><option>Cerrado</option></select>
                 <button type="submit">🚨 Registrar Reporte</button>
             </form>
+
             <h2 class="section-title">Reportes Registrados</h2>
             <table>
-                <thead><tr><th>Encargado</th><th>Anomalía</th><th>Reportado Por</th><th>Área</th><th>Criticidad</th><th>Estatus</th><th>Acciones</th></tr></thead>
+                <thead>
+                    <tr><th>Encargado HSE</th><th>Anomalía</th><th>Reportado Por</th><th>Área</th><th>Criticidad</th><th>Estatus</th><th>Acciones</th></tr>
+                </thead>
                 <tbody id="tablaReportes"></tbody>
             </table>
         </div>
 
-        <!-- MÓDULO ACCIDENTABILIDAD -->
         <div id="accidentabilidad" class="section">
             <h1>📊 Pizarra de Estadísticas de Accidentabilidad</h1>
             <form id="accidentabilidadForm" onsubmit="guardarDatosAccidentabilidad(event)">
-                <select id="acc_empresa_selector" onchange="cargarEmpresaAccidentabilidad(this.value)">
-                    <option value="notions">Notions Dominicana</option><option value="now">Now Logistics</option><option value="gtg">GTG</option>
-                </select>
-                <div class="form-group-row">
-                    <div><label>📅 Fecha Registro</label><input type="date" id="acc_fecha_actualizacion" required></div>
-                    <div><label>Días sin Accidentes</label><input type="number" id="acc_input_dias" required oninput="calcularHorasEnCaliente()"></div>
+                <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #cbd5e1; margin-bottom:20px;">
+                    <label style="font-weight:bold; color:var(--accent-blue); font-size:15px;">🏢 Seleccionar Empresa:</label>
+                    <select id="acc_empresa_selector" onchange="cargarEmpresaAccidentabilidad(this.value)">
+                        <option value="notions">Notions Dominicana</option>
+                        <option value="now">Now Logistics</option>
+                        <option value="gtg">GTG</option>
+                    </select>
                 </div>
-                <div class="form-group-row">
-                    <div><label>👥 Colaboradores</label><input type="number" id="acc_colaboradores" required oninput="calcularHorasEnCaliente()"></div>
-                    <div><label>⏱️ Jornada (hrs)</label><input type="number" id="acc_jornada" value="8" required oninput="calcularHorasEnCaliente()"></div>
-                </div>
-                <div class="form-group-row">
-                    <div><label>🏆 Record Anterior</label><input type="number" id="acc_record_anterior" required></div>
-                    <div><label>🧮 Horas Proyectadas</label><input type="text" id="acc_preview_horas" disabled style="background:#e2e8f0;"></div>
-                </div>
-                <button type="submit" style="width:100%;">💾 Guardar y Actualizar Pizarra</button>
+                <button type="submit" style="width:100%;">💾 Guardar Pizarra</button>
             </form>
-            <div class="charts-container"><div class="chart-box"><canvas id="accidentabilidadEmpresasChart"></canvas></div></div>
         </div>
 
-        <!-- MÓDULO INDUCCIONES -->
         <div id="inducciones" class="section">
             <h1>🦺 Módulo de Inducciones de Seguridad Industrial</h1>
-            <form id="induccionForm" onsubmit="guardarInduccion(event)">
-                <div class="form-group-row">
-                    <div><label>Tipo</label><select id="ind_tipo"><option>Contratista</option><option>Visitante</option></select></div>
-                    <div><label>Nombre Completo</label><input id="ind_nombre" required></div>
-                </div>
-                <div class="form-group-row">
-                    <div><label>Cédula/RNC</label><input id="ind_documento" required></div>
-                    <div><label>Fecha</label><input type="date" id="ind_fecha" required></div>
-                </div>
-                <button type="submit">📋 Inscribir Inducción</button>
-            </form>
-            <h2>Estatus de Vigencias</h2>
-            <table>
-                <thead><tr><th>Tipo</th><th>Nombre</th><th>Identificación</th><th>Registro</th><th>Estatus</th></tr></thead>
-                <tbody id="tablaInducciones"></tbody>
-            </table>
+            <tbody id="tablaInducciones"></tbody>
         </div>
 
-        <!-- MÓDULO ASOCIADOS -->
         <div id="asociados" class="section">
             <h1>🤝 Gestión de Asociados de Negocios</h1>
-            <form id="asociadoForm" onsubmit="guardarAsociadoManual(event)">
-                <div class="form-group-row">
-                    <div><label>Asociado</label><input id="asoc_nombre" required></div>
-                    <div><label>Estatus</label><select id="asoc_estatus"><option>En depuración</option><option>Enviado</option></select></div>
-                </div>
-                <div class="form-group-row">
-                    <div><label>Fecha</label><input type="date" id="asoc_fecha" required></div>
-                    <div><label>Responsable</label><select id="asoc_asignar_a"></select></div>
-                </div>
-                <button type="submit">🤝 Registrar Asociado</button>
-            </form>
-            <table>
-                <thead><tr><th>Responsable</th><th>Asociado</th><th>Fecha</th><th>Estatus</th></tr></thead>
-                <tbody id="tablaAsociados"></tbody>
-            </table>
+            <tbody id="tablaAsociados"></tbody>
         </div>
 
-        <!-- INDICADORES -->
         <div id="indicadores" class="section">
             <h1>📈 Indicadores Estadísticos HSE</h1>
             <div class="charts-container">
-                <div class="chart-box"><canvas id="categoryChart"></canvas></div>
-                <div class="chart-box"><canvas id="complianceChart"></canvas></div>
+                <div class="chart-box"><h3>Distribución por Categorías</h3><div style="position: relative; height:220px;"><canvas id="categoryChart"></canvas></div></div>
+                <div class="chart-box"><h3>Estado de Cumplimiento</h3><div style="position: relative; height:220px;"><canvas id="complianceChart"></canvas></div></div>
             </div>
         </div>
 
         <div id="configuracion" class="section">
             <h1>⚙️ Panel de Configuración</h1>
-            <select onchange="cambiarTemaApariencia(this.value)"><option value="default">🌑 Modo Oscuro</option><option value="light">☀️ Modo Claro</option></select>
         </div>
+
     </div>
 </div>
 
 <script>
-// INITIALIZACIÓN DE SUPABASE (Coloca tus llaves reales aquí)
-const SUPABASE_URL = "TU_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY";
+// --- CONFIGURACIÓN DE SUPABASE (REPLACE EMPTY STRINGS TO ACTIVATE REMOTELY) ---
+const SUPABASE_URL = ""; 
+const SUPABASE_KEY = "";
+let supabase = null;
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (SUPABASE_URL && SUPABASE_KEY) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
 let USUARIOS_VALIDOS = {
-    "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Dep. Cumplimiento & MC" },
-    "jgarcia": { clave: "1234", rol: "inspector", nombre: "Joan García" },
+    "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Super Administrador" },
+    "jgarcia": { clave: "1234", rol: "inspector", nombre: "Joan Garcia" },
     "jhilario": { clave: "1234", rol: "coordinador", nombre: "Jhoan Hilario" },
-    "vtorres": { clave: "1234", rol: "manager", nombre: "Victor Torres" }
+    "vtorres": { clave: "1234", rol: "gerente", nombre: "Victor Torres" }
 };
 
-let SABIAS_QUE_DATOS = ["La Regla de Oro de la SST: 'Si no es seguro, detén el trabajo'.", "El orden elimina el 60% de las caídas en logística."];
+const SABIAS_QUE_DATOS = [
+    "La Regla de Oro de la SST indica: 'Si no es seguro, detén el trabajo'.",
+    "El uso correcto del casco industrial reduce hasta en un 85% el impacto de objetos.",
+    "Un orden y limpieza impecables (5S) elimina de raíz el 60% de las caídas."
+];
+
 let usuarioActivo = JSON.parse(sessionStorage.getItem("sesion_usuario")) || null;
+let actividades = JSON.parse(localStorage.getItem("act")) || [];
+let reportes = JSON.parse(localStorage.getItem("rep")) || [];
 
-let actividades = [];
-let reportes = [];
-let asociados = [];
-let inducciones = [];
-let accidentabilidadMaestra = {
-    notions: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 55,  jornada: 8, recordAnterior: 100 },
-    now: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 30, jornada: 8, recordAnterior: 80 },
-    gtg: { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 20,  jornada: 8, recordAnterior: 50 }
-};
-
-let myCategoryChart, myComplianceChart, myAccidentabilidadChart;
+let myCategoryChart = null;
+let myComplianceChart = null;
 
 function obtenerFechaHoyLocal() {
     let d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    let target = document.getElementById(id);
+    if(target) target.classList.add('active');
+    
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active-menu'));
+    let menu = document.getElementById(`menu-${id}`);
+    if(menu) menu.classList.add('active-menu');
+}
+
 function login(e) {
-    if (e) e.preventDefault();
+    e.preventDefault();
     let user = document.getElementById("username").value.trim().toLowerCase();
     let pass = document.getElementById("password").value;
     if (USUARIOS_VALIDOS[user] && USUARIOS_VALIDOS[user].clave === pass) {
         usuarioActivo = { username: user, ...USUARIOS_VALIDOS[user] };
         sessionStorage.setItem("sesion_usuario", JSON.stringify(usuarioActivo));
         verificarSesion();
-    } else { alert("❌ Credenciales incorrectas."); }
+    } else {
+        alert("Usuario o contraseña incorrectos.");
+    }
 }
 
-function logout() { sessionStorage.removeItem("sesion_usuario"); usuarioActivo = null; verificarSesion(); }
+function logout() {
+    sessionStorage.removeItem("sesion_usuario");
+    usuarioActivo = null;
+    verificarSesion();
+}
 
 function verificarSesion() {
     if (usuarioActivo) {
@@ -473,262 +888,149 @@ function verificarSesion() {
         document.getElementById("user-display-name").innerText = usuarioActivo.nombre;
         document.getElementById("user-display-role").innerText = `Rol: ${usuarioActivo.rol.toUpperCase()}`;
         
-        configurarSelectoresPorRol();
-        let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "manager";
-        document.getElementById("admin-view-selector").style.display = puedeSupervisar ? "flex" : "none";
-        if(!document.getElementById("filtroCalendarioDia").value) document.getElementById("filtroCalendarioDia").value = obtenerFechaHoyLocal();
+        let filtroSelect = document.getElementById("filtroEmpleado");
+        if(filtroSelect) {
+            filtroSelect.innerHTML = `<option value="todos">-- Todos --</option>
+                                      <option value="jgarcia">Joan Garcia</option>
+                                      <option value="jhilario">Jhoan Hilario</option>
+                                      <option value="vtorres">Victor Torres</option>`;
+        }
         
-        cargarDatosDesdeSupabase();
-        escucharCambiosTiempoReal();
+        let puedeVerFiltro = usuarioActivo.rol === "admin" || usuarioActivo.rol === "gerente";
+        document.getElementById("admin-view-selector").style.display = puedeVerFiltro ? "flex" : "none";
+        
+        if(!document.getElementById("filtroCalendarioDia").value){
+            document.getElementById("filtroCalendarioDia").value = obtenerFechaHoyLocal();
+        }
+        
+        conectarYObtenerDatos();
     } else {
         document.getElementById("login-screen").style.display = "flex";
         document.getElementById("app-content").style.display = "none";
     }
 }
 
-// CARGA INICIAL DESDE LAS TABLAS DE SUPABASE
-async function cargarDatosDesdeSupabase() {
-    let resAct = await supabaseClient.from('actividades').select('*');
-    if(resAct.data) actividades = resAct.data;
-
-    let resRep = await supabaseClient.from('reportes').select('*');
-    if(resRep.data) reportes = resRep.data;
-
-    let resInd = await supabaseClient.from('inducciones').select('*');
-    if(resInd.data) inducciones = resInd.data;
-
-    let resAsoc = await supabaseClient.from('asociados').select('*');
-    if(resAsoc.data) asociados = resAsoc.data;
-
-    let resAcc = await supabaseClient.from('accidentabilidad').select('*');
-    if(resAcc.data && resAcc.data.length > 0) {
-        resAcc.data.forEach(item => {
-            if(accidentabilidadMaestra[item.empresa]) accidentabilidadMaestra[item.empresa] = item;
-        });
+async function conectarYObtenerDatos() {
+    if (supabase) {
+        try {
+            let { data: actData } = await supabase.from('actividades').select('*');
+            if(actData) actividades = actData;
+            let { data: repData } = await supabase.from('reportes').select('*');
+            if(repData) reportes = repData;
+        } catch(err) {
+            console.error("Error cargando Supabase, usando local fallback", err);
+        }
     }
-
-    cargarEmpresaAccidentabilidad(document.getElementById("acc_empresa_selector").value);
     ejecutarFiltroGlobal();
 }
 
-// SINCRONIZACIÓN EN TIEMPO REAL CON SUPABASE REALTIME MULTI-DISPOSITIVO
-function escucharCambiosTiempoReal() {
-    supabaseClient
-        .channel('schema-db-changes')
-        .on('postgres_changes', { event: '*', schema: 'public' }, () => {
-            cargarDatosDesdeSupabase();
-        })
-        .subscribe();
-}
-
-function configurarSelectoresPorRol() {
-    let optionsFiltro = `<option value="todos">-- Todos --</option><option value="jgarcia">Joan García</option><option value="jhilario">Jhoan Hilario</option><option value="vtorres">Victor Torres</option>`;
-    let optionsForm = `<option value="jgarcia">Joan García</option><option value="jhilario">Jhoan Hilario</option><option value="vtorres">Victor Torres</option>`;
-    document.getElementById("filtroEmpleado").innerHTML = optionsFiltro;
-    document.getElementById("asignar_a").innerHTML = optionsForm;
-    document.getElementById("asoc_asignar_a").innerHTML = optionsForm;
-}
-
-function showSection(id) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active-menu'));
-    if(document.getElementById(id)) document.getElementById(id).classList.add('active');
-    if(document.getElementById(`menu-${id}`)) document.getElementById(`menu-${id}`).classList.add('active-menu');
-    if(['indicadores','inicio','accidentabilidad'].includes(id)) setTimeout(renderizarGraficosYMetricas, 50);
-}
-
-function cambiarTemaApariencia(t) { document.body.className = t === "light" ? "theme-light" : ""; }
-
-function cargarEmpresaAccidentabilidad(k) {
-    let d = accidentabilidadMaestra[k] || { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 10, jornada: 8, recordAnterior: 10 };
-    document.getElementById("acc_fecha_actualizacion").value = d.fecha || obtenerFechaHoyLocal();
-    document.getElementById("acc_input_dias").value = d.dias || 0;
-    document.getElementById("acc_colaboradores").value = d.colaboradores || 0;
-    document.getElementById("acc_jornada").value = d.jornada || 8;
-    document.getElementById("acc_record_anterior").value = d.recordAnterior || 0;
-    calcularHorasEnCaliente();
-}
-
-function calcularHorasEnCaliente() {
-    let h = (parseInt(document.getElementById("acc_input_dias").value) || 0) * (parseInt(document.getElementById("acc_colaboradores").value) || 0) * (parseInt(document.getElementById("acc_jornada").value) || 0);
-    document.getElementById("acc_preview_horas").value = h.toLocaleString() + " hrs";
-}
-
-// INSERCIONES DE DATOS DIRECTAS A SUPABASE
-async function guardarActividadManual(e) {
-    e.preventDefault();
-    let n = { 
-        usuario: document.getElementById("asignar_a").value, 
-        titulo: document.getElementById("titulo").value, 
-        categoria: document.getElementById("categoria").value, 
-        fecha: document.getElementById("fecha").value, 
-        horas: 2, 
-        estado: document.getElementById("estado").value, 
-        observacion: document.getElementById("observacion").value 
-    };
-    await supabaseClient.from('actividades').insert([n]);
-    document.getElementById("actividadForm").reset();
-}
-
-async function guardarReporteManual(e) {
-    e.preventDefault();
-    let n = { 
-        encargado: usuarioActivo.username, 
-        titulo: document.getElementById("r_titulo").value, 
-        origen: document.getElementById("r_origen").value, 
-        tipo: document.getElementById("r_tipo").value, 
-        criticidad: document.getElementById("r_criticidad").value, 
-        estado: document.getElementById("r_estado").value, 
-        desc: document.getElementById("r_desc").value 
-    };
-    await supabaseClient.from('reportes').insert([n]);
-    document.getElementById("reporteForm").reset();
-}
-
-async function guardarDatosAccidentabilidad(e) {
-    e.preventDefault();
-    let emp = document.getElementById("acc_empresa_selector").value;
-    let n = { 
-        empresa: emp,
-        fecha: document.getElementById("acc_fecha_actualizacion").value, 
-        dias: parseInt(document.getElementById("acc_input_dias").value)||0, 
-        colaboradores: parseInt(document.getElementById("acc_colaboradores").value)||0, 
-        jornada: parseInt(document.getElementById("acc_jornada").value)||0, 
-        recordAnterior: parseInt(document.getElementById("acc_record_anterior").value)||0 
-    };
-    // Hace un upsert (si existe lo actualiza, si no lo crea) usando el campo 'empresa' como referencia
-    await supabaseClient.from('accidentabilidad').upsert([n], { onConflict: 'empresa' });
-    alert("📊 Sincronizado en Supabase para " + emp);
-}
-
-async function guardarInduccion(e) {
-    e.preventDefault();
-    let n = { 
-        tipo: document.getElementById("ind_tipo").value, 
-        nombre: document.getElementById("ind_nombre").value, 
-        documento: document.getElementById("ind_documento").value, 
-        fecha: document.getElementById("ind_fecha").value 
-    };
-    await supabaseClient.from('inducciones').insert([n]);
-    document.getElementById("induccionForm").reset();
-}
-
-async function guardarAsociadoManual(e) {
-    e.preventDefault();
-    let n = { 
-        usuario: document.getElementById("asoc_asignar_a").value, 
-        nombre: document.getElementById("asoc_nombre").value, 
-        fecha: document.getElementById("asoc_fecha").value, 
-        estatus: document.getElementById("asoc_estatus").value 
-    };
-    await supabaseClient.from('asociados').insert([n]);
-    document.getElementById("asociadoForm").reset();
-}
-
-async function eliminarElemento(tabla, id) {
-    if(!confirm("¿Deseas eliminar este registro de Supabase permanentemente?")) return;
-    await supabaseClient.from(tabla).delete().eq('id', id);
-}
-
-// PROCESADOR DE COMBINACIONES DE FILTROS EN LA VISTA
 function ejecutarFiltroGlobal() {
-    let filtroUser = document.getElementById("filtroEmpleado").value;
-    let filtroFecha = document.getElementById("filtroCalendarioDia").value;
-    
-    if(usuarioActivo.rol !== "admin" && usuarioActivo.rol !== "manager") {
-        filtroUser = usuarioActivo.username;
-    }
-
-    let tbodyAct = document.getElementById("tabla");
-    if(tbodyAct) {
-        let filtradas = actividades.filter(a => {
-            let matchUser = (filtroUser === "todos" || a.usuario === filtroUser);
-            let matchFecha = (!filtroFecha || a.fecha === filtroFecha);
-            return matchUser && matchFecha;
-        });
-        tbodyAct.innerHTML = filtradas.map(a => `
-            <tr>
-                <td><strong>${a.usuario.toUpperCase()}</strong></td>
-                <td>${a.titulo}</td>
-                <td><span style="padding:4px 8px; background:#e0f2fe; border-radius:4px;">${a.categoria}</span></td>
-                <td>${a.fecha}</td>
-                <td>${a.horas} hrs</td>
-                <td><span style="padding:4px 8px; border-radius:4px; background:${a.estado==='Completada'?'#d1fae5':'#fef3c7'};">${a.estado}</span></td>
-                <td><button class="btn-delete" onclick="eliminarElemento('actividades', ${a.id})">❌</button></td>
-            </tr>
-        `).join('');
-    }
-
-    let tbodyRep = document.getElementById("tablaReportes");
-    if(tbodyRep) {
-        tbodyRep.innerHTML = reportes.map(r => `
-            <tr>
-                <td>${r.encargado}</td><td>${r.titulo}</td><td>${r.origen}</td><td>${r.tipo}</td>
-                <td>${r.criticidad}</td><td><strong>${r.estado}</strong></td>
-                <td><button class="btn-delete" onclick="eliminarElemento('reportes', ${r.id})">❌</button></td>
-            </tr>
-        `).join('');
-    }
-
-    if(document.getElementById("tablaInducciones")) {
-        document.getElementById("tablaInducciones").innerHTML = inducciones.map(i => `<tr><td>${i.tipo}</td><td>${i.nombre}</td><td>${i.documento}</td><td>${i.fecha}</td><td><span style="color:green;">Activo</span></td></tr>`).join('');
-    }
-
-    if(document.getElementById("tablaAsociados")) {
-        let filteredAsoc = asociados.filter(a => filtroUser === "todos" || a.usuario === filtroUser);
-        document.getElementById("tablaAsociados").innerHTML = filteredAsoc.map(a => `<tr><td>${a.usuario}</td><td>${a.nombre}</td><td>${a.fecha}</td><td>${a.estatus}</td></tr>`).join('');
-    }
-
-    renderizarGraficosYMetricas();
+    render();
+    renderRep();
+    updateCharts();
 }
 
-function renderizarGraficosYMetricas() {
-    let filtroUser = (usuarioActivo.rol === "admin" || usuarioActivo.rol === "manager") ? document.getElementById("filtroEmpleado").value : usuarioActivo.username;
-    let filtroFecha = document.getElementById("filtroCalendarioDia").value;
-
-    let listaAct = actividades.filter(a => {
-        let matchUser = (filtroUser === "todos" || a.usuario === filtroUser);
-        let matchFecha = (!filtroFecha || a.fecha === filtroFecha);
-        return matchUser && matchFecha;
+function render() {
+    let tbody = document.getElementById("tabla");
+    if(!tbody) return;
+    tbody.innerHTML = "";
+    
+    let filtro = usuarioActivo.rol === "inspector" || usuarioActivo.rol === "coordinador" ? usuarioActivo.username : document.getElementById("filtroEmpleado").value;
+    let fechaFiltro = document.getElementById("filtroCalendarioDia").value;
+    
+    let filtradas = actividades.filter(a => {
+        if (fechaFiltro && a.fecha !== fechaFiltro) return false;
+        return filtro === "todos" || a.usuario === filtro;
     });
 
-    let totalCarga = listaAct.length;
-    let completadas = listaAct.filter(a => a.estado === "Completada").length;
-    let horasInvertivas = listaAct.reduce((acc, curr) => acc + (curr.horas || 0), 0);
-    let porcentaje = totalCarga > 0 ? Math.round((completadas / totalCarga) * 100) : 100;
+    filtradas.forEach(a => {
+        tbody.innerHTML += `<tr>
+            <td>${a.usuario || 'Asignado'}</td>
+            <td>${a.titulo}</td>
+            <td>${a.categoria}</td>
+            <td>${a.fecha}</td>
+            <td>1 hr</td>
+            <td><span class="badge-amarillo">${a.estado}</span></td>
+            <td><button class="btn-delete" onclick="eliminarActividad('${a.id || a.titulo}')">❌</button></td>
+        </tr>`;
+    });
+}
 
-    if(document.getElementById("total")) document.getElementById("total").innerText = totalCarga;
-    if(document.getElementById("horas")) document.getElementById("horas").innerText = horasInvertivas;
-    if(document.getElementById("cumplimiento")) document.getElementById("cumplimiento").innerText = porcentaje + "%";
-    if(document.getElementById("dash-pendientes")) document.getElementById("dash-pendientes").innerText = totalCarga - completadas;
-    if(document.getElementById("dash-reportes")) document.getElementById("dash-reportes").innerText = reportes.filter(r => r.estado !== 'Cerrado').length;
+function renderRep() {
+    let tbody = document.getElementById("tablaReportes");
+    if(!tbody) return;
+    tbody.innerHTML = "";
+    reportes.forEach(r => {
+        tbody.innerHTML += `<tr>
+            <td>${usuarioActivo.nombre}</td>
+            <td>${r.titulo}</td>
+            <td>${r.origen || 'Externo'}</td>
+            <td>${r.tipo}</td>
+            <td><span class="badge-rojo">${r.criticidad}</span></td>
+            <td>${r.estado}</td>
+            <td>-</td>
+        </tr>`;
+    });
+}
 
+async function guardarActividadLocal(e) {
+    e.preventDefault();
+    let nueva = {
+        titulo: document.getElementById("titulo").value,
+        categoria: document.getElementById("categoria").value,
+        fecha: document.getElementById("fecha").value,
+        estado: document.getElementById("estado").value,
+        usuario: usuarioActivo.username
+    };
+
+    if (supabase) {
+        await supabase.from('actividades').insert([nueva]);
+    } else {
+        actividades.push(nueva);
+        localStorage.setItem("act", JSON.stringify(actividades));
+    }
+    ejecutarFiltroGlobal();
+}
+
+async function guardarReporteLocal(e) {
+    e.preventDefault();
+    let nuevo = {
+        titulo: document.getElementById("r_titulo").value,
+        tipo: document.getElementById("r_tipo").value,
+        criticidad: document.getElementById("r_criticidad").value,
+        estado: document.getElementById("r_estado").value
+    };
+
+    if (supabase) {
+        await supabase.from('reportes').insert([nuevo]);
+    } else {
+        reportes.push(nuevo);
+        localStorage.setItem("rep", JSON.stringify(reportes));
+    }
+    ejecutarFiltroGlobal();
+}
+
+function updateCharts() {
     let ctxCat = document.getElementById("categoryChart");
     if(ctxCat) {
-        let categorias = ["Seguridad", "Infraestructura", "Ciberseguridad", "Inspecciones", "Auditorías", "Otros"];
-        let conteo = categorias.map(c => listaAct.filter(a => a.categoria === c).length);
         if (myCategoryChart) myCategoryChart.destroy();
-        myCategoryChart = new Chart(ctxCat, { type: 'doughnut', data: { labels: categorias, datasets: [{ data: conteo, backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#6b7280'] }] }, options: { responsive: true, maintainAspectRatio: false } });
-    }
-
-    let ctxComp = document.getElementById("complianceChart");
-    if(ctxComp) {
-        if (myComplianceChart) myComplianceChart.destroy();
-        myComplianceChart = new Chart(ctxComp, { type: 'bar', data: { labels: ["Completadas", "Pendientes"], datasets: [{ label: 'Actividades', data: [completadas, totalCarga - completadas], backgroundColor: ['#10b981', '#f59e0b'] }] }, options: { responsive: true, maintainAspectRatio: false } });
-    }
-
-    let ctxAcc = document.getElementById("accidentabilidadEmpresasChart");
-    if(ctxAcc) {
-        let hNotions = (accidentabilidadMaestra.notions.dias || 0) * (accidentabilidadMaestra.notions.colaboradores || 0) * (accidentabilidadMaestra.notions.jornada || 0);
-        let hNow = (accidentabilidadMaestra.now.dias || 0) * (accidentabilidadMaestra.now.colaboradores || 0) * (accidentabilidadMaestra.now.jornada || 0);
-        let hGtg = (accidentabilidadMaestra.gtg.dias || 0) * (accidentabilidadMaestra.gtg.colaboradores || 0) * (accidentabilidadMaestra.gtg.jornada || 0);
-
-        if (myAccidentabilidadChart) myAccidentabilidadChart.destroy();
-        myAccidentabilidadChart = new Chart(ctxAcc, { type: 'bar', data: { labels: ["Notions Dominicana", "Now Logistics", "GTG"], datasets: [{ label: 'HHT acumuladas sin accidentes', data: [hNotions, hNow, hGtg], backgroundColor: ['#0f172a', '#2563eb', '#10b981'] }] }, options: { responsive: true, maintainAspectRatio: false } });
+        myCategoryChart = new Chart(ctxCat, {
+            type: 'doughnut',
+            data: { labels: ["Seguridad", "Otros"], datasets: [{ data: [actividades.length, 1], backgroundColor: ['#ef4444', '#cbd5e1'] }] },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
     }
 }
 
-window.onload = function() { verificarSesion(); };
+function limpiarFiltroFecha() {
+    document.getElementById("filtroCalendarioDia").value = obtenerFechaHoyLocal();
+    ejecutarFiltroGlobal();
+}
+
+// Inicialización de arranque seguro
+window.onload = function() {
+    verificarSesion();
+};
 </script>
 </body>
 </html>
