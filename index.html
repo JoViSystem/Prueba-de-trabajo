@@ -736,15 +736,7 @@ table select {
                 <thead>
                     <tr><th>Responsable</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Horas</th><th>Estado</th><th>Acciones</th></tr>
                 </thead>
-                <tbody id="tabla"></tbody>
-            </table>
-
-            <h2 class="section-title">📂 Historial Completo de Actividades (Archivo)</h2>
-            <table>
-                <thead>
-                    <tr><th>Responsable</th><th>Título</th><th>Categoría</th><th>Fecha</th><th>Horas</th><th>Estado Final</th><th>Acciones</th></tr>
-                </thead>
-                <tbody id="tablaHistorial"></tbody>
+                <tbody id="tablaActividades"></tbody>
             </table>
         </div>
 
@@ -777,7 +769,7 @@ table select {
 
             <table>
                 <thead>
-                    <tr><th>Encargado HSE</th><th>Anomalía</th><th>Reportado Por</th><th>Área</th><th>Criticidad</th><th>Estatus</th><th>Acciones</th></tr>
+                    <tr><th>Encargado HSE</th><th>Anomalía</th><th>Reportado Por</th><th>Área</th><th>Criticidad</th><th>Descripción</th><th>Estatus</th><th>Acciones</th></tr>
                 </thead>
                 <tbody id="tablaReportes"></tbody>
             </table>
@@ -787,13 +779,6 @@ table select {
             <h1>📊 Pizarra de Estadísticas de Accidentabilidad</h1>
             <p style="color: #64748b; margin-top:-10px;">Control aislado y manual de horas hombre trabajadas por entidad jurídica.</p>
             
-            <div id="acc-banner-trazabilidad" class="trazabilidad-banner" style="display:none;">
-                <div>
-                    ⏳ Han transcurrido <strong id="acc-dias-calculados">0</strong> días desde la última actualización de esta empresa.
-                </div>
-                <button type="button" style="padding: 6px 12px; font-size: 12px;" onclick="aplicarDiasTrazabilidad()">➕ Sumar al Tablero</button>
-            </div>
-
             <form id="accidentabilidadForm" onsubmit="guardarDatosAccidentabilidad(event)">
                 <div style="background:#f8fafc; padding:16px; border-radius:10px; border:1px solid #cbd5e1; margin-bottom:20px;">
                     <label style="font-weight:bold; color:var(--accent-blue); font-size:15px;">🏢 Seleccionar Empresa para Carga de Datos:</label>
@@ -807,18 +792,18 @@ table select {
                 <div class="form-group-row">
                     <div>
                         <label>📅 Fecha de Registro / Actualización</label>
-                        <input type="date" id="acc_fecha_actualizacion" required onchange="verificarTrazabilidadFechas()">
+                        <input type="date" id="acc_fecha_actualizacion" required>
                     </div>
                     <div>
                         <label>🔢 Días Transcurridos sin Accidentes Acumulados</label>
-                        <input type="number" id="acc_input_dias" placeholder="Ej: 66" min="0" oninput="calcularHorasEnCaliente()" required>
+                        <input type="number" id="acc_input_dias" placeholder="Ej: 66" min="0" required>
                     </div>
                 </div>
                 
                 <div class="form-group-row" style="background: #fff5f5; padding: 10px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #fecaca;">
                     <div>
                         <label style="color: var(--sec-red);">🚨 Cantidad de Accidentes Registrados en este Periodo</label>
-                        <input type="number" id="acc_accidentes_periodo" value="0" min="0" oninput="calcularHorasEnCaliente()" style="border-color: var(--sec-red); margin-bottom:0;">
+                        <input type="number" id="acc_accidentes_periodo" value="0" min="0" style="border-color: var(--sec-red); margin-bottom:0;">
                     </div>
                     <div>
                         <label>💡 Regla Operativa SST</label>
@@ -829,21 +814,17 @@ table select {
                 <div class="form-group-row">
                     <div>
                         <label>👥 Cantidad de Colaboradores / Dotación Activa</label>
-                        <input type="number" id="acc_colaboradores" value="55" min="1" oninput="calcularHorasEnCaliente()" required>
+                        <input type="number" id="acc_colaboradores" value="55" min="1" required>
                     </div>
                     <div>
                         <label>⏱️ Horas por Jornada Laboral Estándar</label>
-                        <input type="number" id="acc_jornada" value="8" min="1" max="24" oninput="calcularHorasEnCaliente()" required>
+                        <input type="number" id="acc_jornada" value="8" min="1" max="24" required>
                     </div>
                 </div>
                 <div class="form-group-row">
                     <div>
                         <label>🏆 Record Días Histórico Anterior</label>
                         <input type="number" id="acc_record_anterior" placeholder="Ej: 244" min="0" required>
-                    </div>
-                    <div>
-                        <label>🧮 Cálculo de Horas Proyectadas de Seguridad</label>
-                        <input type="text" id="acc_preview_horas" value="0 hrs" disabled style="background:#e2e8f0; font-weight:bold; color:var(--accent-blue);">
                     </div>
                 </div>
                 <button type="submit" style="background:var(--sidebar-bg); width:100%;">💾 Guardar y Actualizar Pizarra (<span id="txt-btn-empresa">Notions Dominicana</span>)</button>
@@ -853,7 +834,7 @@ table select {
             <div class="charts-container" style="margin-top: 15px;">
                 <div class="chart-box" style="flex: 1.2; min-width: 300px;">
                     <h3>📈 Comparativa: Horas Hombre Sin Accidentes acumuladas</h3>
-                    <div style="position: relative; height:240px;"><canvas id="accidentabilidadEmpresasChart"></canvas></div>
+                    <div style="position: relative; height:240px;"><canvas id="accidentabilidadChart"></canvas></div>
                 </div>
                 <div style="flex: 0.8; min-width: 250px; background: white; padding: 20px; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                     <h3 style="margin-top:0; font-size:14px; color:var(--sidebar-bg); text-transform:uppercase; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">Resumen Resguardado</h3>
@@ -890,7 +871,7 @@ table select {
                         <input type="date" id="ind_fecha" required>
                     </div>
                 </div>
-                <div class="form-group-row" id="campos-dinamicos-induccion">
+                <div class="form-group-row" id="div_ind_empresa">
                     <div>
                         <label>Empresa Contratista</label>
                         <input id="ind_empresa" required placeholder="Nombre de la empresa contratista">
@@ -906,10 +887,10 @@ table select {
             <table>
                 <thead>
                     <tr>
-                        <th>Personal</th>
                         <th>Nombre</th>
-                        <th>Identificación / Empresa</th>
-                        <th>Área</th>
+                        <th>Identificación</th>
+                        <th>Personal</th>
+                        <th>Empresa</th>
                         <th>Registro</th>
                         <th>Vencimiento</th>
                         <th>Estatus</th>
@@ -932,10 +913,10 @@ table select {
                     <div>
                         <label>Estatus del Proceso Inicial</label>
                         <select id="asoc_estatus">
-                            <option value="En depuración">🔍 En depuración</option>
-                            <option value="En revisión y firma">✍️ En revisión y firma</option>
-                            <option value="Listo para enviar">📦 Listo para enviar</option>
-                            <option value="Enviado">🚀 Enviado</option>
+                            <option value="Mantenimiento de Estatus">🔍 Mantenimiento de Estatus</option>
+                            <option value="Re-Certificación">✍️ Re-Certificación</option>
+                            <option value="Nueva Vinculación">📦 Nueva Vinculación</option>
+                            <option value="Auditoría BASC">🚀 Auditoría BASC</option>
                         </select>
                     </div>
                 </div>
@@ -957,36 +938,18 @@ table select {
             </form>
 
             <h2 class="section-title">📋 Flujo de Operaciones Activas</h2>
-            <div class="export-bar">
-                <button class="btn-export-excel" onclick="exportarAsociadosExcel()">📥 Exportar Flujo de Asociados a Excel</button>
-            </div>
-
             <table>
                 <thead>
                     <tr>
                         <th>Responsable Asignado</th>
                         <th>Nombre del Asociado</th>
-                        <th>Fecha Registro</th>
-                        <th>Tiempo Invertido</th>
                         <th>Estatus Actual</th>
+                        <th>Fecha / Horario</th>
+                        <th>Bitácora Histórica de Cambios</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tablaAsociados"></tbody>
-            </table>
-
-            <h2 class="section-title" style="color: var(--accent-blue);">📂 Vista de Historial Global e Inspección General</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="background:#0f172a;">📍 ¿Quién lo tiene?</th>
-                        <th style="background:#0f172a;">Empresa / Asociado</th>
-                        <th style="background:#0f172a;">Tiempo Invertido</th>
-                        <th style="background:#0f172a;">Estatus Actual</th>
-                        <th style="background:#0f172a;">📜 Bitácora Histórica de Cambios y Fechas</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaAsociadosHistorialGlobal"></tbody>
             </table>
         </div>
 
@@ -1006,7 +969,7 @@ table select {
                     <h3>👤 Foto de Perfil</h3>
                     <div style="display:flex; flex-direction:column; align-items:center; gap:15px; background:#f8fafc; padding:20px; border-radius:10px;">
                         <img id="config-avatar-preview" src="" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:3px solid var(--accent-blue);">
-                        <input type="file" id="input-avatar-file" accept="image/*" onchange="actualizarFotoPerfil(this)">
+                        <input type="file" id="input-avatar-file" accept="image/*">
                         <small style="color:gray;">Sube un archivo de imagen local (.jpg, .png)</small>
                     </div>
                 </div>
@@ -1015,18 +978,11 @@ table select {
                     <h3>🎨 Preferencias de Interfaz & Cuenta</h3>
                     
                     <label>Tema de Apariencia de la Página:</label>
-                    <select id="config-theme-selector" onchange="cambiarTemaApariencia(this.value)">
+                    <select id="config-theme-selector" onchange="cambiarTemaApp(this.value)">
                         <option value="default">🌑 Modo Oscuro Corporativo (Por defecto)</option>
                         <option value="light">☀️ Modo Claro Limpio</option>
                         <option value="eco">🌿 Modo Ecológico SST</option>
                     </select>
-
-                    <form id="passwordChangeForm" onsubmit="cambiarContrasenaUsuario(event)" style="box-shadow:none; padding:0; margin-top:20px;">
-                        <h4 style="margin:0 0 10px 0; color:var(--sidebar-bg);">🔒 Modificar Contraseña</h4>
-                        <label>Nueva Contraseña:</label>
-                        <input type="password" id="new-password-input" required placeholder="Escribe tu nueva clave">
-                        <button type="submit" style="width:100%;">⚡ Guardar Nueva Contraseña</button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -1038,7 +994,6 @@ table select {
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-// 1. CONFIGURACIÓN COMPLETA DE TU PROYECTO
 const firebaseConfig = {
   apiKey: "AIzaSyDTDaGLwcLTDBI2vMz-8piMVADZOhRrFic",
   authDomain: "control-cumplimiento.firebaseapp.com",
@@ -1049,11 +1004,9 @@ const firebaseConfig = {
   measurementId: "G-M9EV6F5YTE"
 };
 
-// Inicializar Firebase de forma global
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 2. ROLES CORREGIDOS Y DATOS ESTÁTICOS ORIGINALES
 let USUARIOS_VALIDOS = JSON.parse(localStorage.getItem("app_usuarios")) || { 
     "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Super Administrador" }, 
     "jgarcia": { clave: "1234", rol: "inspector", nombre: "Joan Garcia" }, 
@@ -1072,7 +1025,6 @@ const SABIAS_QUE_DATOS = [
 
 let usuarioActivo = JSON.parse(sessionStorage.getItem("sesion_usuario")) || null;
 
-// Arrays de datos maestros que Firestore actualizará automáticamente
 let actividades = [];
 let reportes = [];
 let asociados = [];
@@ -1087,7 +1039,6 @@ let myCategoryChart = null;
 let myComplianceChart = null;
 let myAccidentabilidadChart = null;
 
-// 3. ESCUCHADORES EN TIEMPO REAL (SINCRONIZACIÓN DE LA NUBE)
 function iniciarSincronizacionFirestore() {
     db.collection("actividades").onSnapshot(function(snapshot) {
         actividades = [];
@@ -1220,6 +1171,11 @@ function getFiltroUsuario() {
     return esSupervisorOAdmin ? document.getElementById("filtroEmpleado").value : usuarioActivo.username;
 }
 
+function limpiarFiltroFecha() {
+    document.getElementById("filtroCalendarioDia").value = obtenerFechaHoyLocal();
+    ejecutarFiltroGlobal();
+}
+
 function ejecutarFiltroGlobal() {
     render();
     renderRep();
@@ -1242,7 +1198,6 @@ function showSection(id){
     if(menuMap[id]) document.getElementById(menuMap[id]).classList.add("active-menu");
 }
 
-// 4. RECEPCIÓN Y ENVÍO DE FORMULARIOS A FIRESTORE
 document.getElementById("actividadForm").addEventListener("submit", function(e) {
     e.preventDefault();
     let respInput = document.getElementById("asignar_a").value;
@@ -1281,6 +1236,7 @@ document.getElementById("actividadForm").addEventListener("submit", function(e) 
         }
     }
     this.reset();
+    alert("Actividad programada y guardada en la nube con éxito.");
 });
 
 document.getElementById("reporteForm").addEventListener("submit", function(e) {
@@ -1296,6 +1252,7 @@ document.getElementById("reporteForm").addEventListener("submit", function(e) {
     };
     db.collection("reportes").add(nuevoRep);
     this.reset();
+    alert("Reporte de anomalía cargado con éxito.");
 });
 
 document.getElementById("asociadoForm").addEventListener("submit", function(e) {
@@ -1312,6 +1269,7 @@ document.getElementById("asociadoForm").addEventListener("submit", function(e) {
     };
     db.collection("asociados").add(nuevoAsoc);
     this.reset();
+    alert("Asociado de negocio inscrito.");
 });
 
 function guardarInduccion(e) {
@@ -1345,11 +1303,10 @@ function guardarDatosAccidentabilidad(e) {
         accidentes: parseInt(document.getElementById("acc_accidentes_periodo").value) || 0
     };
     db.collection("accidentabilidad").doc("master").set(accidentabilidadMaestra).then(function() {
-        alert("Pizarra de accidentabilidad actualizada globalmente en la nube.");
+        alert("Pizarra de accidentabilidad actualizada globalmente.");
     });
 }
 
-// 5. FUNCIONES DE EDICIÓN Y ELIMINACIÓN GLOBAL
 function eliminarActividad(id) {
     if(confirm("¿Seguro que deseas eliminar esta actividad?")) {
         db.collection("actividades").doc(id).delete();
@@ -1394,7 +1351,6 @@ function eliminarInduccion(id) {
     }
 }
 
-// 6. LOGICA VISUAL E IMPRESIÓN DE TABLAS ORIGINALES
 function render() {
     let tbody = document.getElementById("tablaActividades");
     if(!tbody) return;
@@ -1414,41 +1370,59 @@ function render() {
 
         let selEstado = '<select onchange="cambiarEstadoActividadTabla(\'' + a.id + '\', this.value)">' +
             '<option value="Pendiente" ' + (a.estado==="Pendiente"?'selected':'') + '>Pendiente</option>' +
-            '<option value="En Proceso" ' + (a.estado==="En Proceso"?'selected':'') + '>En Proceso</option>' +
+            '<option value="En proceso" ' + (a.estado==="En proceso"?'selected':'') + '>En proceso</option>' +
             '<option value="Completada" ' + (a.estado==="Completada"?'selected':'') + '>Completada</option>' +
-            '<option value="Cancelada" ' + (a.estado==="Cancelada"?'selected':'') + '>Cancelada</option>' +
         '</select>';
 
         let selResp = "";
         if(usuarioActivo.rol === "admin" || usuarioActivo.rol === "gerente" || usuarioActivo.rol === "coordinador") {
-            selResp = '<select onchange="cambiarResponsableActividadTabla(\'' + a.id + '\', this.value)">' +
+            selResp = '<select class="select-responsable-tabla" onchange="cambiarResponsableActividadTabla(\'' + a.id + '\', this.value)">' +
                 '<option value="jgarcia" ' + (a.usuario==="jgarcia"?'selected':'') + '>Joan Garcia</option>' +
                 '<option value="jhilario" ' + (a.usuario==="jhilario"?'selected':'') + '>Jhoan Hilario</option>' +
                 '<option value="vtorres" ' + (a.usuario==="vtorres"?'selected':'') + '>Victor Torres</option>' +
-                '<option value="dcumplimiento" ' + (a.usuario==="dcumplimiento"?'selected':'') + '>Super Administrador</option>' +
+                (usuarioActivo.rol === "admin" ? '<option value="dcumplimiento" ' + (a.usuario==="dcumplimiento"?'selected':'') + '>Super Administrador</option>' : '') +
             '</select>';
         } else {
             selResp = '<span>' + uNombre + '</span>';
         }
 
+        let calculoHoras = "0";
+        if(a.hora_inicio && a.hora_fin) {
+            let h1 = new Date("2000-01-01T" + a.hora_inicio);
+            let h2 = new Date("2000-01-01T" + a.hora_fin);
+            let dif = (h2 - h1) / (1000 * 60 * 60);
+            calculoHoras = dif > 0 ? dif.toFixed(1) : "0";
+        }
+
         tr.innerHTML = '<td>' + selResp + '</td>' +
             '<td><strong>' + a.titulo + '</strong></td>' +
-            '<td><span class="badge badge-blue">' + a.categoria + '</span></td>' +
+            '<td><span class="badge-azul" style="padding:4px 8px; border-radius:12px; font-size:12px;">' + a.categoria + '</span></td>' +
             '<td>' + a.fecha + '</td>' +
-            '<td>' + a.hora_inicio + ' - ' + a.hora_fin + '</td>' +
+            '<td>' + a.hora_inicio + ' - ' + a.hora_fin + ' (' + calculoHoras + 'h)</td>' +
             '<td>' + selEstado + '</td>' +
-            '<td><small>' + (a.observacion || '') + '</small></td>' +
-            '<td><button class="btn-action btn-red" onclick="eliminarActividad(\'' + a.id + '\')">Eliminar</button></td>';
+            '<td><button class="btn-delete" onclick="eliminarActividad(\'' + a.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 
+    // Vincular y calcular métricas reales en las tarjetas del Dashboard
     let totalAct = listaFiltrada.length;
     let compAct = listaFiltrada.filter(a => a.estado === "Completada").length;
     let porc = totalAct > 0 ? Math.round((compAct / totalAct) * 100) : 0;
+    
+    let horasHoy = 0;
+    listaFiltrada.forEach(a => {
+        if(a.estado === "Completada" && a.hora_inicio && a.hora_fin) {
+            let h1 = new Date("2000-01-01T" + a.hora_inicio);
+            let h2 = new Date("2000-01-01T" + a.hora_fin);
+            let dif = (h2 - h1) / (1000 * 60 * 60);
+            if(dif > 0) horasHoy += dif;
+        }
+    });
 
-    document.getElementById("widget-total-tareas").innerText = totalAct;
-    document.getElementById("widget-comp-tareas").innerText = compAct;
-    document.getElementById("widget-porc-cumplimiento").innerText = porc + "%";
+    if(document.getElementById("total")) document.getElementById("total").innerText = totalAct;
+    if(document.getElementById("horas")) document.getElementById("horas").innerText = horasHoy.toFixed(1);
+    if(document.getElementById("cumplimiento")) document.getElementById("cumplimiento").innerText = porc + "%";
+    if(document.getElementById("dash-pendientes")) document.getElementById("dash-pendientes").innerText = (totalAct - compAct);
 }
 
 function renderRep() {
@@ -1462,23 +1436,27 @@ function renderRep() {
 
         let selEst = '<select onchange="cambiarEstadoReporteTabla(\'' + r.id + '\', this.value)">' +
             '<option value="Abierto" ' + (r.estado==="Abierto"?'selected':'') + '>Abierto</option>' +
-            '<option value="En Mitigación" ' + (r.estado==="En Mitigación"?'selected':'') + '>En Mitigación</option>' +
+            '<option value="En proceso" ' + (r.estado==="En proceso"?'selected':'') + '>En proceso</option>' +
             '<option value="Cerrado" ' + (r.estado==="Cerrado"?'selected':'') + '>Cerrado</option>' +
         '</select>';
+
+        let badgeCriticidad = "badge-azul";
+        if(r.criticidad === "Alto") badgeCriticidad = "badge-rojo";
+        if(r.criticidad === "Medio") badgeCriticidad = "badge-amarillo";
 
         tr.innerHTML = '<td><small>' + encargadoNom + '</small></td>' +
             '<td><strong>' + r.titulo + '</strong></td>' +
             '<td>' + r.origen + '</td>' +
             '<td>' + r.tipo + '</td>' +
-            '<td><span class="badge ' + (r.criticidad==='Alta'?'badge-red':r.criticidad==='Media'?'badge-yellow':'badge-blue') + '">' + r.criticidad + '</span></td>' +
+            '<td><span class="' + badgeCriticidad + '" style="padding:4px 8px; border-radius:12px; font-size:12px;">' + r.criticidad + '</span></td>' +
             '<td><small>' + r.desc + '</small></td>' +
             '<td>' + selEst + '</td>' +
-            '<td><button class="btn-action btn-red" onclick="eliminarReporte(\'' + r.id + '\')">Eliminar</button></td>';
+            '<td><button class="btn-delete" onclick="eliminarReporte(\'' + r.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 
-    document.getElementById("widget-total-reportes").innerText = reportes.length;
-    document.getElementById("widget-rep-abiertos").innerText = reportes.filter(r => r.estado !== "Cerrado").length;
+    let abiertos = reportes.filter(r => r.estado !== "Cerrado").length;
+    if(document.getElementById("dash-reportes")) document.getElementById("dash-reportes").innerText = abiertos;
 }
 
 function renderAsociados() {
@@ -1494,32 +1472,32 @@ function renderAsociados() {
         let uNom = USUARIOS_VALIDOS[as.usuario] ? USUARIOS_VALIDOS[as.usuario].nombre : as.usuario;
 
         let selEst = '<select onchange="cambiarEstatusAsociadoTabla(\'' + as.id + '\', this.value)">' +
-            '<option value="Mantenimiento de Estatus" ' + (as.estatus==="Mantenimiento de Estatus"?'selected':'') + '>Mantenimiento de Estatus</option>' +
-            '<option value="Re-Certificación" ' + (as.estatus==="Re-Certificación"?'selected':'') + '>Re-Certificación</option>' +
-            '<option value="Nueva Vinculación" ' + (as.estatus==="Nueva Vinculación"?'selected':'') + '>Nueva Vinculación</option>' +
-            '<option value="Auditoría BASC" ' + (as.estatus==="Auditoría BASC"?'selected':'') + '>Auditoría BASC</option>' +
+            '<option value="Mantenimiento de Estatus" ' + (as.estatus==="Mantenimiento de Estatus"?'selected':'') + '>🔍 Mantenimiento</option>' +
+            '<option value="Re-Certificación" ' + (as.estatus==="Re-Certificación"?'selected':'') + '>✍️ Re-Certificación</option>' +
+            '<option value="Nueva Vinculación" ' + (as.estatus==="Nueva Vinculación"?'selected':'') + '>📦 Nueva Vinculación</option>' +
+            '<option value="Auditoría BASC" ' + (as.estatus==="Auditoría BASC"?'selected':'') + '>🚀 Auditoría BASC</option>' +
         '</select>';
 
         let selResp = "";
         if(usuarioActivo.rol === "admin" || usuarioActivo.rol === "gerente" || usuarioActivo.rol === "coordinador") {
-            selResp = '<select onchange="cambiarResponsableAsociadoTabla(\'' + as.id + '\', this.value)">' +
+            selResp = '<select class="select-responsable-tabla" onchange="cambiarResponsableAsociadoTabla(\'' + as.id + '\', this.value)">' +
                 '<option value="jgarcia" ' + (as.usuario==="jgarcia"?'selected':'') + '>Joan Garcia</option>' +
                 '<option value="jhilario" ' + (as.usuario==="jhilario"?'selected':'') + '>Jhoan Hilario</option>' +
                 '<option value="vtorres" ' + (as.usuario==="vtorres"?'selected':'') + '>Victor Torres</option>' +
-                '<option value="dcumplimiento" ' + (as.usuario==="dcumplimiento"?'selected':'') + '>Super Administrador</option>' +
+                (usuarioActivo.rol === "admin" ? '<option value="dcumplimiento" ' + (as.usuario==="dcumplimiento"?'selected':'') + '>Super Administrador</option>' : '') +
             '</select>';
         } else {
             selResp = '<span>' + uNom + '</span>';
         }
 
-        let logsHTML = (as.historialLog || []).map(l => '<div>• <small>' + l + '</small></div>').join("");
+        let logsHTML = (as.historialLog || []).map(l => '<div class="log-item">' + l + '</div>').join("");
 
         tr.innerHTML = '<td>' + selResp + '</td>' +
             '<td><strong>' + as.nombre + '</strong></td>' +
             '<td>' + selEst + '</td>' +
-            '<td>' + as.fecha + ' <br><small>' + as.hora_inicio + '-' + as.hora_fin + '</small></td>' +
-            '<td><div style="max-height:80px; overflow-y:auto; text-align:left;">' + logsHTML + '</div></td>' +
-            '<td><button class="btn-action btn-red" onclick="eliminarAsociado(\'' + as.id + '\')">Eliminar</button></td>';
+            '<td>' + as.fecha + '<br><small>' + as.hora_inicio + ' - ' + as.hora_fin + '</small></td>' +
+            '<td><div class="log-box">' + logsHTML + '</div></td>' +
+            '<td><button class="btn-delete" onclick="eliminarAsociado(\'' + as.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 }
@@ -1537,11 +1515,11 @@ function renderInducciones() {
         let diffTiempo = fVence - hoy;
         let diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
 
-        let estatusBadge = '<span class="badge badge-green">Vigente (' + diffDias + ' días)</span>';
+        let estatusBadge = '<span class="badge-verde" style="padding:4px 8px; border-radius:12px; font-size:12px;">Vigente (' + diffDias + ' d)</span>';
         if(diffDias <= 0) {
-            estatusBadge = '<span class="badge badge-red">Vencido</span>';
+            estatusBadge = '<span class="badge-rojo" style="padding:4px 8px; border-radius:12px; font-size:12px;">Vencido</span>';
         } else if(diffDias <= 30) {
-            estatusBadge = '<span class="badge badge-yellow">Por Vencer (' + diffDias + ' d)</span>';
+            estatusBadge = '<span class="badge-amarillo" style="padding:4px 8px; border-radius:12px; font-size:12px;">Por Vencer (' + diffDias + ' d)</span>';
         }
 
         tr.innerHTML = '<td><strong>' + ind.nombre + '</strong></td>' +
@@ -1551,23 +1529,24 @@ function renderInducciones() {
             '<td>' + ind.fecha + '</td>' +
             '<td>' + ind.vencimiento + '</td>' +
             '<td>' + estatusBadge + '</td>' +
-            '<td><button class="btn-action btn-red" onclick="eliminarInduccion(\'' + ind.id + '\')">Eliminar</button></td>';
+            '<td><button class="btn-delete" onclick="eliminarInduccion(\'' + ind.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 }
 
 function cargarEmpresaAccidentabilidad(emp) {
-    let datos = accidentabilidadMaestra[emp] || { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 1, jornada: 8, recordAnterior: 0, accidentes: 0 };
+    let datos = accidentabilidadMaestra[emp] || { fecha: obtenerFechaHoyLocal(), dias: 0, colaboradores: 55, jornada: 8, recordAnterior: 0, accidentes: 0 };
     document.getElementById("acc_fecha_actualizacion").value = datos.fecha;
     document.getElementById("acc_input_dias").value = datos.dias;
     document.getElementById("acc_colaboradores").value = datos.colaboradores;
     document.getElementById("acc_jornada").value = datos.jornada;
     document.getElementById("acc_record_anterior").value = datos.recordAnterior;
     document.getElementById("acc_accidentes_periodo").value = datos.accidentes;
+    document.getElementById("txt-btn-empresa").innerText = emp === "notions" ? "Notions Dominicana" : emp === "now" ? "Now Logistics" : "GTG";
 }
 
 function renderModuloVisualAccidentabilidad() {
-    let contenedor = document.getElementById("pizarras-accidentabilidad-container");
+    let contenedor = document.getElementById("resumen-lista-empresas");
     if(!contenedor) return;
     contenedor.innerHTML = "";
 
@@ -1576,25 +1555,11 @@ function renderModuloVisualAccidentabilidad() {
         let hht = d.dias * d.colaboradores * d.jornada;
         let IF = d.accidentes > 0 ? ((d.accidentes * 200000) / hht).toFixed(2) : "0.00";
 
-        let tarjeta = document.createElement("div");
-        tarjeta.className = "card-acc-pizarra";
-        let colorFondoDias = d.dias >= d.recordAnterior && d.recordAnterior > 0 ? "#dcfce7" : "#fff";
-
-        tarjeta.innerHTML = '<h3 style="text-transform: uppercase; color:#1e293b; margin-bottom:10px; border-bottom:2px solid #3b82f6; padding-bottom:5px;">' + emp + '</h3>' +
-            '<div style="font-size: 2rem; font-weight: bold; color: #10b981; background:' + colorFondoDias + '; padding:10px; border-radius:6px; margin-bottom:10px;">' +
-                d.dias + ' <span style="font-size:1rem; color:#64748b;">Días Sin Accidentes</span>' +
-            '</div>' +
-            '<div style="text-align: left; font-size:0.9rem; line-height:1.5;">' +
-                '<div><strong>Récord Anterior:</strong> ' + d.recordAnterior + ' días</div>' +
-                '<div><strong>Colaboradores Activos:</strong> ' + d.colaboradores + '</div>' +
-                '<div><strong>Horas Hombre Trabajadas (HHT):</strong> ' + hht.toLocaleString() + ' hrs</div>' +
-                '<div><strong>Accidentes en Período:</strong> ' + d.accidentes + '</div>' +
-                '<div style="margin-top:5px; padding-top:5px; border-top:1px dashed #cbd5e1; color:#ef4444;">' +
-                    '<strong>Índice de Frecuencia (IF):</strong> ' + IF +
-                '</div>' +
-                '<div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">U.M: ' + d.fecha + '</div>' +
-            '</div>';
-        contenedor.appendChild(tarjeta);
+        let block = document.createElement("div");
+        block.style = "background:#f8fafc; padding:10px; border-radius:8px; border-left:4px solid var(--accent-blue);";
+        block.innerHTML = '<strong>' + emp.toUpperCase() + ':</strong> ' + d.dias + ' Días sin Accidentes<br>' +
+                          '<small style="color:gray;">HHT Acumuladas: ' + hht.toLocaleString() + ' hrs | IF: ' + IF + '</small>';
+        contenedor.appendChild(block);
     }
 }
 
@@ -1627,7 +1592,7 @@ function updateCharts() {
         if (myComplianceChart) myComplianceChart.destroy();
         myComplianceChart = new Chart(ctxComp, {
             type: 'bar',
-            data: { labels: ["Completadas", ["Pendientes /", "En Proceso"]], datasets: [{ label: 'Actividades', data: [completadas, pendientesEnProceso], backgroundColor: ['#10b981', '#f59e0b'] }] },
+            data: { labels: ["Completadas", "Pendientes"], datasets: [{ label: 'Actividades', data: [completadas, pendientesEnProceso], backgroundColor: ['#10b981', '#f59e0b'] }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
     }
@@ -1657,14 +1622,14 @@ function adaptarFormularioInduccion(valor) {
 function cambiarTemaApp(tema) {
     document.body.className = "";
     if(tema !== 'default') {
-        document.body.classList.add(tema);
+        document.body.classList.add("theme-" + tema);
     }
     localStorage.setItem("app_tema_preferido", tema);
 }
 
 function cargarPreferenciasUsuarioActivo() {
     let t = localStorage.getItem("app_tema_preferido") || "default";
-    const selectTema = document.getElementById("config_tema_selector");
+    const selectTema = document.getElementById("config-theme-selector");
     if (selectTema) selectTema.value = t;
     cambiarTemaApp(t);
 }
@@ -1672,7 +1637,7 @@ function cargarPreferenciasUsuarioActivo() {
 function exportarActividadesExcel() {
     let csv = [];
     let rows = document.querySelectorAll("#tablaActividades tr");
-    csv.push("Responsable,Actividad,Categoria,Fecha,Horario,Estado,Observacion");
+    csv.push("Responsable,Actividad,Categoria,Fecha,Horario,Estado");
     
     rows.forEach(function(row) {
         let cols = row.querySelectorAll("td");
@@ -1684,9 +1649,8 @@ function exportarActividadesExcel() {
             let fec = cols[3].innerText.trim();
             let hor = cols[4].innerText.trim();
             let est = cols[5].querySelector("select") ? cols[5].querySelector("select").selectedOptions[0].text : cols[5].innerText.trim();
-            let obs = cols[6].innerText.trim().replace(/,/g, " ");
             
-            fila.push('"' + resp + '"','"' + tit + '"','"' + cat + '"','"' + fec + '"','"' + hor + '"','"' + est + '"','"' + obs + '"');
+            fila.push('"' + resp + '"','"' + tit + '"','"' + cat + '"','"' + fec + '"','"' + hor + '"','"' + est + '"');
             csv.push(fila.join(","));
         }
     });
@@ -1701,7 +1665,6 @@ function exportarActividadesExcel() {
     document.body.removeChild(link);
 }
 
-// 7. VINCULACIÓN DE EVENTOS DE ENTRADA E INICIO DE SISTEMA
 document.getElementById("loginForm").addEventListener("submit", login);
 
 window.onload = function() {
