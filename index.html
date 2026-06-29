@@ -1034,14 +1034,11 @@ table select {
     </div>
 </div>
 
-<script type="module">
-// 1. Importar las librerías oficiales desde el CDN de Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-    getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, setDoc, updateDoc, getDoc, deleteDoc 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-// 2. Tus credenciales de configuración de 'Control de Cumplimiento'
+<script>
+// 1. CONFIGURACIÓN COMPLETA DE TU PROYECTO
 const firebaseConfig = {
   apiKey: "AIzaSyDTDaGLwcLTDBI2vMz-8piMVADZOhRrFic",
   authDomain: "control-cumplimiento.firebaseapp.com",
@@ -1052,12 +1049,12 @@ const firebaseConfig = {
   measurementId: "G-M9EV6F5YTE"
 };
 
-// Inicializar la aplicación y la base de datos
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Inicializar Firebase de forma global
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-// 3. Variables de Usuarios e Historial (Tus roles de SST corregidos)
-let USUARIOS_VALIDOS = { 
+// 2. ROLES CORREGIDOS Y DATOS ESTÁTICOS ORIGINALES
+let USUARIOS_VALIDOS = JSON.parse(localStorage.getItem("app_usuarios")) || { 
     "dcumplimiento": { clave: "admin123", rol: "admin", nombre: "Super Administrador" }, 
     "jgarcia": { clave: "1234", rol: "inspector", nombre: "Joan Garcia" }, 
     "jhilario": { clave: "1234", rol: "coordinador", nombre: "Jhoan Hilario" }, 
@@ -1075,7 +1072,7 @@ const SABIAS_QUE_DATOS = [
 
 let usuarioActivo = JSON.parse(sessionStorage.getItem("sesion_usuario")) || null;
 
-// Estructuras principales de datos en tiempo real
+// Arrays de datos maestros que Firestore actualizará automáticamente
 let actividades = [];
 let reportes = [];
 let asociados = [];
@@ -1090,37 +1087,45 @@ let myCategoryChart = null;
 let myComplianceChart = null;
 let myAccidentabilidadChart = null;
 
-// Escuchadores de datos de la Nube (Sincronizan todo tu equipo al instante)
+// 3. ESCUCHADORES EN TIEMPO REAL (SINCRONIZACIÓN DE LA NUBE)
 function iniciarSincronizacionFirestore() {
-    onSnapshot(collection(db, "actividades"), (snapshot) => {
+    db.collection("actividades").onSnapshot(function(snapshot) {
         actividades = [];
-        snapshot.forEach((doc) => { actividades.push({ id: doc.id, ...doc.data() }); });
+        snapshot.forEach(function(doc) {
+            actividades.push(Object.assign({ id: doc.id }, doc.data()));
+        });
         ejecutarFiltroGlobal();
     });
 
-    onSnapshot(collection(db, "reportes"), (snapshot) => {
+    db.collection("reportes").onSnapshot(function(snapshot) {
         reportes = [];
-        snapshot.forEach((doc) => { reportes.push({ id: doc.id, ...doc.data() }); });
+        snapshot.forEach(function(doc) {
+            reportes.push(Object.assign({ id: doc.id }, doc.data()));
+        });
         ejecutarFiltroGlobal();
     });
 
-    onSnapshot(collection(db, "asociados"), (snapshot) => {
+    db.collection("asociados").onSnapshot(function(snapshot) {
         asociados = [];
-        snapshot.forEach((doc) => { asociados.push({ id: doc.id, ...doc.data() }); });
+        snapshot.forEach(function(doc) {
+            asociados.push(Object.assign({ id: doc.id }, doc.data()));
+        });
         ejecutarFiltroGlobal();
     });
 
-    onSnapshot(collection(db, "inducciones"), (snapshot) => {
+    db.collection("inducciones").onSnapshot(function(snapshot) {
         inducciones = [];
-        snapshot.forEach((doc) => { inducciones.push({ id: doc.id, ...doc.data() }); });
+        snapshot.forEach(function(doc) {
+            inducciones.push(Object.assign({ id: doc.id }, doc.data()));
+        });
         ejecutarFiltroGlobal();
     });
 
-    onSnapshot(doc(db, "accidentabilidad", "master"), (documento) => {
-        if (documento.exists()) {
-            accidentabilidadMaestra = documento.data();
+    db.collection("accidentabilidad").doc("master").onSnapshot(function(doc) {
+        if (doc.exists) {
+            accidentabilidadMaestra = doc.data();
         } else {
-            setDoc(doc(db, "accidentabilidad", "master"), accidentabilidadMaestra);
+            db.collection("accidentabilidad").doc("master").set(accidentabilidadMaestra);
         }
         ejecutarFiltroGlobal();
     });
@@ -1131,7 +1136,7 @@ function obtenerFechaHoyLocal() {
     let yyyy = d.getFullYear();
     let mm = String(d.getMonth() + 1).padStart(2, '0');
     let dd = String(d.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    return yyyy + "-" + mm + "-" + dd;
 }
 
 function rotarSabiasQue() {
@@ -1143,11 +1148,11 @@ function rotarSabiasQue() {
 }
 
 function login(e) {
-    e.preventDefault();
+    if(e) e.preventDefault();
     let user = document.getElementById("username").value.trim().toLowerCase();
     let pass = document.getElementById("password").value;
     if (USUARIOS_VALIDOS[user] && USUARIOS_VALIDOS[user].clave === pass) {
-        usuarioActivo = { username: user, ...USUARIOS_VALIDOS[user] };
+        usuarioActivo = Object.assign({ username: user }, USUARIOS_VALIDOS[user]);
         sessionStorage.setItem("sesion_usuario", JSON.stringify(usuarioActivo));
         verificarSesion();
     } else {
@@ -1166,7 +1171,7 @@ function verificarSesion() {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("app-content").style.display = "block";
         document.getElementById("user-display-name").innerText = usuarioActivo.nombre;
-        document.getElementById("user-display-role").innerText = `Rol: ${usuarioActivo.rol.toUpperCase()}`;
+        document.getElementById("user-display-role").innerText = "Rol: " + usuarioActivo.rol.toUpperCase();
         cargarPreferenciasUsuarioActivo();
         configurarSelectoresPorRol();
         rotarSabiasQue();
@@ -1175,7 +1180,7 @@ function verificarSesion() {
 
         let puedeSupervisar = usuarioActivo.rol === "admin" || usuarioActivo.rol === "gerente" || usuarioActivo.rol === "coordinador";
         document.getElementById("admin-view-selector").style.display = puedeSupervisar ? "flex" : "none";
-        document.getElementById("welcome-title").innerText = puedeSupervisar ? "Dashboard Global de Control" : `Dashboard - ${usuarioActivo.nombre}`;
+        document.getElementById("welcome-title").innerText = puedeSupervisar ? "Dashboard Global de Control" : "Dashboard - " + usuarioActivo.nombre;
         
         if(!document.getElementById("filtroCalendarioDia").value){
             document.getElementById("filtroCalendarioDia").value = obtenerFechaHoyLocal();
@@ -1193,21 +1198,21 @@ function configurarSelectoresPorRol() {
     let filtroSelect = document.getElementById("filtroEmpleado");
     let asignaAct = document.getElementById("asignar_a");
     let asignaAsoc = document.getElementById("asoc_asignar_a");
-    let optionsFiltro = `<option value="todos">-- Todos los Empleados --</option>
-                         <option value="jgarcia">Joan Garcia</option>
-                         <option value="jhilario">Jhoan Hilario</option>
-                         <option value="vtorres">Victor Torres</option>`;
-    let optionsForm = `<option value="">-- Mismo (Asignación propia) --</option>
-                       <option value="jgarcia">Joan Garcia</option>
-                       <option value="jhilario">Jhoan Hilario</option>
-                       <option value="vtorres">Victor Torres</option>`;
+    let optionsFiltro = '<option value="todos">-- Todos los Empleados --</option>' +
+                         '<option value="jgarcia">Joan Garcia</option>' +
+                         '<option value="jhilario">Jhoan Hilario</option>' +
+                         '<option value="vtorres">Victor Torres</option>';
+    let optionsForm = '<option value="">-- Mismo (Asignación propia) --</option>' +
+                       '<option value="jgarcia">Joan Garcia</option>' +
+                       '<option value="jhilario">Jhoan Hilario</option>' +
+                       '<option value="vtorres">Victor Torres</option>';
     if (usuarioActivo.rol === "admin") {
-        optionsFiltro += `<option value="dcumplimiento">Super Administrador</option>`;
-        optionsForm += `<option value="dcumplimiento">Super Administrador</option>`;
+        optionsFiltro += '<option value="dcumplimiento">Super Administrador</option>';
+        optionsForm += '<option value="dcumplimiento">Super Administrador</option>';
     }
-    filtroSelect.innerHTML = optionsFiltro;
-    asignaAct.innerHTML = optionsForm;
-    asignaAsoc.innerHTML = optionsForm;
+    if(filtroSelect) filtroSelect.innerHTML = optionsFiltro;
+    if(asignaAct) asignaAct.innerHTML = optionsForm;
+    if(asignaAsoc) asignaAsoc.innerHTML = optionsForm;
 }
 
 function getFiltroUsuario() {
@@ -1237,7 +1242,7 @@ function showSection(id){
     if(menuMap[id]) document.getElementById(menuMap[id]).classList.add("active-menu");
 }
 
-// 4. GUARDADO DE REGISTROS DIRECTOS A FIRESTORE
+// 4. RECEPCIÓN Y ENVÍO DE FORMULARIOS A FIRESTORE
 document.getElementById("actividadForm").addEventListener("submit", function(e) {
     e.preventDefault();
     let respInput = document.getElementById("asignar_a").value;
@@ -1255,24 +1260,24 @@ document.getElementById("actividadForm").addEventListener("submit", function(e) 
     };
 
     if(nuevaAct.frecuencia === "unica") {
-        addDoc(collection(db, "actividades"), nuevaAct);
+        db.collection("actividades").add(nuevaAct);
     } else if(nuevaAct.frecuencia === "diaria") {
         let fechaBase = new Date(nuevaAct.fecha + 'T00:00:00');
         for(let i=0; i<7; i++) {
-            let copia = {...nuevaAct, frecuencia: "unica"};
+            let copia = Object.assign({}, nuevaAct, {frecuencia: "unica"});
             let d = new Date(fechaBase);
             d.setDate(d.getDate() + i);
             copia.fecha = d.toISOString().split('T')[0];
-            addDoc(collection(db, "actividades"), copia);
+            db.collection("actividades").add(copia);
         }
     } else if(nuevaAct.frecuencia === "mensual") {
         let fechaBase = new Date(nuevaAct.fecha + 'T00:00:00');
         for(let i=0; i<3; i++) {
-            let copia = {...nuevaAct, frecuencia: "unica"};
+            let copia = Object.assign({}, nuevaAct, {frecuencia: "unica"});
             let d = new Date(fechaBase);
             d.setMonth(d.getMonth() + i);
             copia.fecha = d.toISOString().split('T')[0];
-            addDoc(collection(db, "actividades"), copia);
+            db.collection("actividades").add(copia);
         }
     }
     this.reset();
@@ -1289,7 +1294,7 @@ document.getElementById("reporteForm").addEventListener("submit", function(e) {
         desc: document.getElementById("r_desc").value,
         estado: document.getElementById("r_estado").value
     };
-    addDoc(collection(db, "reportes"), nuevoRep);
+    db.collection("reportes").add(nuevoRep);
     this.reset();
 });
 
@@ -1303,14 +1308,14 @@ document.getElementById("asociadoForm").addEventListener("submit", function(e) {
         fecha: document.getElementById("asoc_fecha").value,
         hora_inicio: document.getElementById("asoc_hora_inicio").value,
         hora_fin: document.getElementById("asoc_hora_fin").value,
-        historialLog: [`Registrado inicialmente como [${document.getElementById("asoc_estatus").value}] por ${usuarioActivo.nombre} el ${obtenerFechaHoyLocal()}`]
+        historialLog: ["Registrado inicialmente como [" + document.getElementById("asoc_estatus").value + "] por " + usuarioActivo.nombre + " el " + obtenerFechaHoyLocal()]
     };
-    addDoc(collection(db, "asociados"), nuevoAsoc);
+    db.collection("asociados").add(nuevoAsoc);
     this.reset();
 });
 
-document.getElementById("induccionForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+function guardarInduccion(e) {
+    if(e) e.preventDefault();
     let deVence = new Date(document.getElementById("ind_fecha").value + 'T00:00:00');
     deVence.setFullYear(deVence.getFullYear() + 1);
     let fVence = deVence.toISOString().split('T')[0];
@@ -1323,13 +1328,13 @@ document.getElementById("induccionForm").addEventListener("submit", function(e) 
         vencimiento: fVence,
         empresa: document.getElementById("ind_tipo").value === "Contratista" ? document.getElementById("ind_empresa").value : "N/A"
     };
-    addDoc(collection(db, "inducciones"), nuevaInd);
-    this.reset();
+    db.collection("inducciones").add(nuevaInd);
+    document.getElementById("induccionForm").reset();
     adaptarFormularioInduccion("Contratista");
-});
+}
 
-document.getElementById("accidentabilidadForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+function guardarDatosAccidentabilidad(e) {
+    if(e) e.preventDefault();
     let emp = document.getElementById("acc_empresa_selector").value;
     accidentabilidadMaestra[emp] = {
         fecha: document.getElementById("acc_fecha_actualizacion").value,
@@ -1339,64 +1344,57 @@ document.getElementById("accidentabilidadForm").addEventListener("submit", funct
         recordAnterior: parseInt(document.getElementById("acc_record_anterior").value) || 0,
         accidentes: parseInt(document.getElementById("acc_accidentes_periodo").value) || 0
     };
-    setDoc(doc(db, "accidentabilidad", "master"), accidentabilidadMaestra).then(() => {
-        alert("Pizarra de accidentabilidad actualizada globalmente.");
+    db.collection("accidentabilidad").doc("master").set(accidentabilidadMaestra).then(function() {
+        alert("Pizarra de accidentabilidad actualizada globalmente en la nube.");
     });
-});
+}
 
-// 5. FUNCIONES QUE SE EXPORTAN A LA VENTANA (WINDOW) PARA LAS TABLAS E INTERFAZ HTML
-window.eliminarActividad = function(id) {
-    if(confirm("¿Seguro que deseas eliminar esta actividad de la nube?")) {
-        deleteDoc(doc(db, "actividades", id));
+// 5. FUNCIONES DE EDICIÓN Y ELIMINACIÓN GLOBAL
+function eliminarActividad(id) {
+    if(confirm("¿Seguro que deseas eliminar esta actividad?")) {
+        db.collection("actividades").doc(id).delete();
     }
 }
-window.cambiarEstadoActividadTabla = function(id, nuevoEstado) {
-    updateDoc(doc(db, "actividades", id), { estado: nuevoEstado });
+function cambiarEstadoActividadTabla(id, nuevoEstado) {
+    db.collection("actividades").doc(id).update({ estado: nuevoEstado });
 }
-window.cambiarResponsableActividadTabla = function(id, nuevoResp) {
-    updateDoc(doc(db, "actividades", id), { usuario: nuevoResp });
+function cambiarResponsableActividadTabla(id, nuevoResp) {
+    db.collection("actividades").doc(id).update({ usuario: nuevoResp });
 }
-window.eliminarReporte = function(id) {
+function eliminarReporte(id) {
     if(confirm("¿Eliminar reporte permanentemente?")) {
-        deleteDoc(doc(db, "reportes", id));
+        db.collection("reportes").doc(id).delete();
     }
 }
-window.cambiarEstadoReporteTabla = function(id, nuevoEst) {
-    updateDoc(doc(db, "reportes", id), { estado: nuevoEst });
+function cambiarEstadoReporteTabla(id, nuevoEst) {
+    db.collection("reportes").doc(id).update({ estado: nuevoEst });
 }
-window.eliminarAsociado = function(id) {
+function eliminarAsociado(id) {
     if(confirm("¿Eliminar asociado permanentemente?")) {
-        deleteDoc(doc(db, "asociados", id));
+        db.collection("asociados").doc(id).delete();
     }
 }
-window.cambiarEstatusAsociadoTabla = function(id, nuevoEst) {
-    let docRef = doc(db, "asociados", id);
-    getDoc(docRef).then((documento) => {
-        if(documento.exists()) {
-            let datos = documento.data();
+function cambiarEstatusAsociadoTabla(id, nuevoEst) {
+    let docRef = db.collection("asociados").doc(id);
+    docRef.get().then(function(docSnap) {
+        if(docSnap.exists) {
+            let datos = docSnap.data();
             let historial = datos.historialLog || [];
-            historial.push(`Cambio de estatus a [${nuevoEst}] por ${usuarioActivo.nombre} el ${obtenerFechaHoyLocal()}`);
-            updateDoc(docRef, { estatus: nuevoEst, historialLog: historial });
+            historial.push("Cambio de estatus a [" + nuevoEst + "] por " + usuarioActivo.nombre + " el " + obtenerFechaHoyLocal());
+            docRef.update({ estatus: nuevoEst, historialLog: historial });
         }
     });
 }
-window.cambiarResponsableAsociadoTabla = function(id, nuevoResp) {
-    updateDoc(doc(db, "asociados", id), { usuario: nuevoResp });
+function cambiarResponsableAsociadoTabla(id, nuevoResp) {
+    db.collection("asociados").doc(id).update({ usuario: nuevoResp });
 }
-window.eliminarInduccion = function(id) {
+function eliminarInduccion(id) {
     if(confirm("¿Eliminar registro de inducción?")) {
-        deleteDoc(doc(db, "inducciones", id));
+        db.collection("inducciones").doc(id).delete();
     }
 }
-window.showSection = showSection;
-window.logout = logout;
-window.adaptarFormularioInduccion = adaptarFormularioInduccion;
-window.cambiarTemaApp = cambiarTemaApp;
-window.exportarActividadesExcel = exportarActividadesExcel;
-window.cargarEmpresaAccidentabilidad = cargarEmpresaAccidentabilidad;
-window.ejecutarFiltroGlobal = ejecutarFiltroGlobal;
 
-// 6. FUNCIONES DE RENDERS Y GRÁFICOS ORIGINALES
+// 6. LOGICA VISUAL E IMPRESIÓN DE TABLAS ORIGINALES
 function render() {
     let tbody = document.getElementById("tablaActividades");
     if(!tbody) return;
@@ -1405,44 +1403,42 @@ function render() {
     let filtro = getFiltroUsuario();
     let filtroDia = document.getElementById("filtroCalendarioDia").value;
 
-    let listaFiltrada = actividades.filter(a => {
+    let listaFiltrada = actividades.filter(function(a) {
         if(filtroDia && a.fecha !== filtroDia) return false;
         return filtro === "todos" || a.usuario === filtro;
     });
 
-    listaFiltrada.forEach(a => {
+    listaFiltrada.forEach(function(a) {
         let tr = document.createElement("tr");
         let uNombre = USUARIOS_VALIDOS[a.usuario] ? USUARIOS_VALIDOS[a.usuario].nombre : a.usuario;
 
-        let selEstado = `<select onchange="cambiarEstadoActividadTabla('${a.id}', this.value)">
-            <option value="Pendiente" ${a.estado==="Pendiente"?'selected':''}>Pendiente</option>
-            <option value="En Proceso" ${a.estado==="En Proceso"?'selected':''}>En Proceso</option>
-            <option value="Completada" ${a.estado==="Completada"?'selected':''}>Completada</option>
-            <option value="Cancelada" ${a.estado==="Cancelada"?'selected':''}>Cancelada</option>
-        </select>`;
+        let selEstado = '<select onchange="cambiarEstadoActividadTabla(\'' + a.id + '\', this.value)">' +
+            '<option value="Pendiente" ' + (a.estado==="Pendiente"?'selected':'') + '>Pendiente</option>' +
+            '<option value="En Proceso" ' + (a.estado==="En Proceso"?'selected':'') + '>En Proceso</option>' +
+            '<option value="Completada" ' + (a.estado==="Completada"?'selected':'') + '>Completada</option>' +
+            '<option value="Cancelada" ' + (a.estado==="Cancelada"?'selected':'') + '>Cancelada</option>' +
+        '</select>';
 
         let selResp = "";
         if(usuarioActivo.rol === "admin" || usuarioActivo.rol === "gerente" || usuarioActivo.rol === "coordinador") {
-            selResp = `<select onchange="cambiarResponsableActividadTabla('${a.id}', this.value)">
-                <option value="jgarcia" ${a.usuario==="jgarcia"?'selected':''}>Joan Garcia</option>
-                <option value="jhilario" ${a.usuario==="jhilario"?'selected':''}>Jhoan Hilario</option>
-                <option value="vtorres" ${a.usuario==="vtorres"?'selected':''}>Victor Torres</option>
-                <option value="dcumplimiento" ${a.usuario==="dcumplimiento"?'selected':''}>Super Administrador</option>
-            </select>`;
+            selResp = '<select onchange="cambiarResponsableActividadTabla(\'' + a.id + '\', this.value)">' +
+                '<option value="jgarcia" ' + (a.usuario==="jgarcia"?'selected':'') + '>Joan Garcia</option>' +
+                '<option value="jhilario" ' + (a.usuario==="jhilario"?'selected':'') + '>Jhoan Hilario</option>' +
+                '<option value="vtorres" ' + (a.usuario==="vtorres"?'selected':'') + '>Victor Torres</option>' +
+                '<option value="dcumplimiento" ' + (a.usuario==="dcumplimiento"?'selected':'') + '>Super Administrador</option>' +
+            '</select>';
         } else {
-            selResp = `<span>${uNombre}</span>`;
+            selResp = '<span>' + uNombre + '</span>';
         }
 
-        tr.innerHTML = `
-            <td>${selResp}</td>
-            <td><strong>${a.titulo}</strong></td>
-            <td><span class="badge badge-blue">${a.categoria}</span></td>
-            <td>${a.fecha}</td>
-            <td>${a.hora_inicio} - ${a.hora_fin}</td>
-            <td>${selEstado}</td>
-            <td><small>${a.observacion || ''}</small></td>
-            <td><button class="btn-action btn-red" onclick="eliminarActividad('${a.id}')">Eliminar</button></td>
-        `;
+        tr.innerHTML = '<td>' + selResp + '</td>' +
+            '<td><strong>' + a.titulo + '</strong></td>' +
+            '<td><span class="badge badge-blue">' + a.categoria + '</span></td>' +
+            '<td>' + a.fecha + '</td>' +
+            '<td>' + a.hora_inicio + ' - ' + a.hora_fin + '</td>' +
+            '<td>' + selEstado + '</td>' +
+            '<td><small>' + (a.observacion || '') + '</small></td>' +
+            '<td><button class="btn-action btn-red" onclick="eliminarActividad(\'' + a.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 
@@ -1460,31 +1456,29 @@ function renderRep() {
     if(!tbody) return;
     tbody.innerHTML = "";
 
-    reportes.forEach(r => {
+    reportes.forEach(function(r) {
         let tr = document.createElement("tr");
         let encargadoNom = USUARIOS_VALIDOS[r.encargado] ? USUARIOS_VALIDOS[r.encargado].nombre : r.encargado;
 
-        let selEst = `<select onchange="cambiarEstadoReporteTabla('${r.id}', this.value)">
-            <option value="Abierto" ${r.estado==="Abierto"?'selected':''}>Abierto</option>
-            <option value="En Mitigación" ${r.estado==="En Mitigación"?'selected':''}>En Mitigación</option>
-            <option value="Cerrado" ${r.estado==="Cerrado"?'selected':''}>Cerrado</option>
-        </select>`;
+        let selEst = '<select onchange="cambiarEstadoReporteTabla(\'' + r.id + '\', this.value)">' +
+            '<option value="Abierto" ' + (r.estado==="Abierto"?'selected':'') + '>Abierto</option>' +
+            '<option value="En Mitigación" ' + (r.estado==="En Mitigación"?'selected':'') + '>En Mitigación</option>' +
+            '<option value="Cerrado" ' + (r.estado==="Cerrado"?'selected':'') + '>Cerrado</option>' +
+        '</select>';
 
-        tr.innerHTML = `
-            <td><small>${encargadoNom}</small></td>
-            <td><strong>${r.titulo}</strong></td>
-            <td>${r.origen}</td>
-            <td>${r.tipo}</td>
-            <td><span class="badge ${r.criticidad==='Alta'?'badge-red':r.criticidad==='Media'?'badge-yellow':'badge-blue'}">${r.criticidad}</span></td>
-            <td><small>${r.desc}</small></td>
-            <td>${selEst}</td>
-            <td><button class="btn-action btn-red" onclick="eliminarReporte('${r.id}')">Eliminar</button></td>
-        `;
+        tr.innerHTML = '<td><small>' + encargadoNom + '</small></td>' +
+            '<td><strong>' + r.titulo + '</strong></td>' +
+            '<td>' + r.origen + '</td>' +
+            '<td>' + r.tipo + '</td>' +
+            '<td><span class="badge ' + (r.criticidad==='Alta'?'badge-red':r.criticidad==='Media'?'badge-yellow':'badge-blue') + '">' + r.criticidad + '</span></td>' +
+            '<td><small>' + r.desc + '</small></td>' +
+            '<td>' + selEst + '</td>' +
+            '<td><button class="btn-action btn-red" onclick="eliminarReporte(\'' + r.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 
     document.getElementById("widget-total-reportes").innerText = reportes.length;
-    document.getElementById("widget-rep-abiertos").innerText = reportes.filter(r=>r.estado!=="Cerrado").length;
+    document.getElementById("widget-rep-abiertos").innerText = reportes.filter(r => r.estado !== "Cerrado").length;
 }
 
 function renderAsociados() {
@@ -1495,39 +1489,37 @@ function renderAsociados() {
     let filtro = getFiltroUsuario();
     let listaFiltrada = asociados.filter(as => filtro === "todos" || as.usuario === filtro);
 
-    listaFiltrada.forEach(as => {
+    listaFiltrada.forEach(function(as) {
         let tr = document.createElement("tr");
         let uNom = USUARIOS_VALIDOS[as.usuario] ? USUARIOS_VALIDOS[as.usuario].nombre : as.usuario;
 
-        let selEst = `<select onchange="cambiarEstatusAsociadoTabla('${as.id}', this.value)">
-            <option value="Mantenimiento de Estatus" ${as.estatus==="Mantenimiento de Estatus"?'selected':''}>Mantenimiento de Estatus</option>
-            <option value="Re-Certificación" ${as.estatus==="Re-Certificación"?'selected':''}>Re-Certificación</option>
-            <option value="Nueva Vinculación" ${as.estatus==="Nueva Vinculación"?'selected':''}>Nueva Vinculación</option>
-            <option value="Auditoría BASC" ${as.estatus==="Auditoría BASC"?'selected':''}>Auditoría BASC</option>
-        </select>`;
+        let selEst = '<select onchange="cambiarEstatusAsociadoTabla(\'' + as.id + '\', this.value)">' +
+            '<option value="Mantenimiento de Estatus" ' + (as.estatus==="Mantenimiento de Estatus"?'selected':'') + '>Mantenimiento de Estatus</option>' +
+            '<option value="Re-Certificación" ' + (as.estatus==="Re-Certificación"?'selected':'') + '>Re-Certificación</option>' +
+            '<option value="Nueva Vinculación" ' + (as.estatus==="Nueva Vinculación"?'selected':'') + '>Nueva Vinculación</option>' +
+            '<option value="Auditoría BASC" ' + (as.estatus==="Auditoría BASC"?'selected':'') + '>Auditoría BASC</option>' +
+        '</select>';
 
         let selResp = "";
         if(usuarioActivo.rol === "admin" || usuarioActivo.rol === "gerente" || usuarioActivo.rol === "coordinador") {
-            selResp = `<select onchange="cambiarResponsableAsociadoTabla('${as.id}', this.value)">
-                <option value="jgarcia" ${as.usuario==="jgarcia"?'selected':''}>Joan Garcia</option>
-                <option value="jhilario" ${as.usuario==="jhilario"?'selected':''}>Jhoan Hilario</option>
-                <option value="vtorres" ${as.usuario==="vtorres"?'selected':''}>Victor Torres</option>
-                <option value="dcumplimiento" ${as.usuario==="dcumplimiento"?'selected':''}>Super Administrador</option>
-            </select>`;
+            selResp = '<select onchange="cambiarResponsableAsociadoTabla(\'' + as.id + '\', this.value)">' +
+                '<option value="jgarcia" ' + (as.usuario==="jgarcia"?'selected':'') + '>Joan Garcia</option>' +
+                '<option value="jhilario" ' + (as.usuario==="jhilario"?'selected':'') + '>Jhoan Hilario</option>' +
+                '<option value="vtorres" ' + (as.usuario==="vtorres"?'selected':'') + '>Victor Torres</option>' +
+                '<option value="dcumplimiento" ' + (as.usuario==="dcumplimiento"?'selected':'') + '>Super Administrador</option>' +
+            '</select>';
         } else {
-            selResp = `<span>${uNom}</span>`;
+            selResp = '<span>' + uNom + '</span>';
         }
 
-        let logsHTML = (as.historialLog || []).map(l => `<div>• <small>${l}</small></div>`).join("");
+        let logsHTML = (as.historialLog || []).map(l => '<div>• <small>' + l + '</small></div>').join("");
 
-        tr.innerHTML = `
-            <td>${selResp}</td>
-            <td><strong>${as.nombre}</strong></td>
-            <td>${selEst}</td>
-            <td>${as.fecha} <br><small>${as.hora_inicio}-${as.hora_fin}</small></td>
-            <td><div style="max-height:80px; overflow-y:auto; text-align:left;">${logsHTML}</div></td>
-            <td><button class="btn-action btn-red" onclick="eliminarAsociado('${as.id}')">Eliminar</button></td>
-        `;
+        tr.innerHTML = '<td>' + selResp + '</td>' +
+            '<td><strong>' + as.nombre + '</strong></td>' +
+            '<td>' + selEst + '</td>' +
+            '<td>' + as.fecha + ' <br><small>' + as.hora_inicio + '-' + as.hora_fin + '</small></td>' +
+            '<td><div style="max-height:80px; overflow-y:auto; text-align:left;">' + logsHTML + '</div></td>' +
+            '<td><button class="btn-action btn-red" onclick="eliminarAsociado(\'' + as.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 }
@@ -1539,29 +1531,27 @@ function renderInducciones() {
 
     let hoy = new Date(obtenerFechaHoyLocal() + 'T00:00:00');
 
-    inducciones.forEach(ind => {
+    inducciones.forEach(function(ind) {
         let tr = document.createElement("tr");
         let fVence = new Date(ind.vencimiento + 'T00:00:00');
         let diffTiempo = fVence - hoy;
         let diffDias = Math.ceil(diffTiempo / (1000 * 60 * 60 * 24));
 
-        let estatusBadge = `<span class="badge badge-green">Vigente (${diffDias} días)</span>`;
+        let estatusBadge = '<span class="badge badge-green">Vigente (' + diffDias + ' días)</span>';
         if(diffDias <= 0) {
-            estatusBadge = `<span class="badge badge-red">Vencido</span>`;
+            estatusBadge = '<span class="badge badge-red">Vencido</span>';
         } else if(diffDias <= 30) {
-            estatusBadge = `<span class="badge badge-yellow">Por Vencer (${diffDias} d)</span>`;
+            estatusBadge = '<span class="badge badge-yellow">Por Vencer (' + diffDias + ' d)</span>';
         }
 
-        tr.innerHTML = `
-            <td><strong>${ind.nombre}</strong></td>
-            <td><small>${ind.documento}</small></td>
-            <td>${ind.tipo}</td>
-            <td><small>${ind.empresa}</small></td>
-            <td>${ind.fecha}</td>
-            <td>${ind.vencimiento}</td>
-            <td>${estatusBadge}</td>
-            <td><button class="btn-action btn-red" onclick="eliminarInduccion('${ind.id}')">Eliminar</button></td>
-        `;
+        tr.innerHTML = '<td><strong>' + ind.nombre + '</strong></td>' +
+            '<td><small>' + ind.documento + '</small></td>' +
+            '<td>' + ind.tipo + '</td>' +
+            '<td><small>' + ind.empresa + '</small></td>' +
+            '<td>' + ind.fecha + '</td>' +
+            '<td>' + ind.vencimiento + '</td>' +
+            '<td>' + estatusBadge + '</td>' +
+            '<td><button class="btn-action btn-red" onclick="eliminarInduccion(\'' + ind.id + '\')">Eliminar</button></td>';
         tbody.appendChild(tr);
     });
 }
@@ -1590,22 +1580,20 @@ function renderModuloVisualAccidentabilidad() {
         tarjeta.className = "card-acc-pizarra";
         let colorFondoDias = d.dias >= d.recordAnterior && d.recordAnterior > 0 ? "#dcfce7" : "#fff";
 
-        tarjeta.innerHTML = `
-            <h3 style="text-transform: uppercase; color:#1e293b; margin-bottom:10px; border-bottom:2px solid #3b82f6; padding-bottom:5px;">${emp}</h3>
-            <div style="font-size: 2rem; font-weight: bold; color: #10b981; background:${colorFondoDias}; padding:10px; border-radius:6px; margin-bottom:10px;">
-                ${d.dias} <span style="font-size:1rem; color:#64748b;">Días Sin Accidentes</span>
-            </div>
-            <div style="text-align: left; font-size:0.9rem; line-height:1.5;">
-                <div><strong>Récord Anterior:</strong> ${d.recordAnterior} días</div>
-                <div><strong>Colaboradores Activos:</strong> ${d.colaboradores}</div>
-                <div><strong>Horas Hombre Trabajadas (HHT):</strong> ${hht.toLocaleString()} hrs</div>
-                <div><strong>Accidentes en Período:</strong> ${d.accidentes}</div>
-                <div style="margin-top:5px; padding-top:5px; border-top:1px dashed #cbd5e1; color:#ef4444;">
-                    <strong>Índice de Frecuencia (IF):</strong> ${IF}
-                </div>
-                <div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">U.M: ${d.fecha}</div>
-            </div>
-        `;
+        tarjeta.innerHTML = '<h3 style="text-transform: uppercase; color:#1e293b; margin-bottom:10px; border-bottom:2px solid #3b82f6; padding-bottom:5px;">' + emp + '</h3>' +
+            '<div style="font-size: 2rem; font-weight: bold; color: #10b981; background:' + colorFondoDias + '; padding:10px; border-radius:6px; margin-bottom:10px;">' +
+                d.dias + ' <span style="font-size:1rem; color:#64748b;">Días Sin Accidentes</span>' +
+            '</div>' +
+            '<div style="text-align: left; font-size:0.9rem; line-height:1.5;">' +
+                '<div><strong>Récord Anterior:</strong> ' + d.recordAnterior + ' días</div>' +
+                '<div><strong>Colaboradores Activos:</strong> ' + d.colaboradores + '</div>' +
+                '<div><strong>Horas Hombre Trabajadas (HHT):</strong> ' + hht.toLocaleString() + ' hrs</div>' +
+                '<div><strong>Accidentes en Período:</strong> ' + d.accidentes + '</div>' +
+                '<div style="margin-top:5px; padding-top:5px; border-top:1px dashed #cbd5e1; color:#ef4444;">' +
+                    '<strong>Índice de Frecuencia (IF):</strong> ' + IF +
+                '</div>' +
+                '<div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">U.M: ' + d.fecha + '</div>' +
+            '</div>';
         contenedor.appendChild(tarjeta);
     }
 }
@@ -1614,7 +1602,7 @@ function updateCharts() {
     let filtro = getFiltroUsuario();
     let filtroDia = document.getElementById("filtroCalendarioDia").value;
 
-    let listaFiltrada = actividades.filter(a => {
+    let listaFiltrada = actividades.filter(function(a) {
         if(filtroDia && a.fecha !== filtroDia) return false;
         return filtro === "todos" || a.usuario === filtro;
     });
@@ -1686,7 +1674,7 @@ function exportarActividadesExcel() {
     let rows = document.querySelectorAll("#tablaActividades tr");
     csv.push("Responsable,Actividad,Categoria,Fecha,Horario,Estado,Observacion");
     
-    rows.forEach(row => {
+    rows.forEach(function(row) {
         let cols = row.querySelectorAll("td");
         if(cols.length > 0) {
             let fila = [];
@@ -1698,7 +1686,7 @@ function exportarActividadesExcel() {
             let est = cols[5].querySelector("select") ? cols[5].querySelector("select").selectedOptions[0].text : cols[5].innerText.trim();
             let obs = cols[6].innerText.trim().replace(/,/g, " ");
             
-            fila.push(`"${resp}"`,`"${tit}"`,`"${cat}"`,`"${fec}"`,`"${hor}"`,`"${est}"`,`"${obs}"`);
+            fila.push('"' + resp + '"','"' + tit + '"','"' + cat + '"','"' + fec + '"','"' + hor + '"','"' + est + '"','"' + obs + '"');
             csv.push(fila.join(","));
         }
     });
@@ -1707,17 +1695,18 @@ function exportarActividadesExcel() {
     let encodedUri = encodeURI(csvContent);
     let link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Reporte_Actividades_${obtenerFechaHoyLocal()}.csv`);
+    link.setAttribute("download", "Reporte_Actividades_" + obtenerFechaHoyLocal() + ".csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
 
-// 7. Enlazar el Login e iniciar la vista
+// 7. VINCULACIÓN DE EVENTOS DE ENTRADA E INICIO DE SISTEMA
 document.getElementById("loginForm").addEventListener("submit", login);
 
-// Ejecutar verificación de sesión inmediatamente al cargar el módulo
-verificarSesion();
+window.onload = function() {
+    verificarSesion();
+};
 </script>
 </body>
 </html>
