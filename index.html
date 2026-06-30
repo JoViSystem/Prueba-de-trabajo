@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control de Cumplimiento</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -22,7 +24,6 @@
     --sec-azul: #3b82f6;
 }
 
-/* TEMAS ADICIONALES */
 body.theme-light {
     --bg-main: #f8fafc;
     --sidebar-bg: #1e293b;
@@ -41,7 +42,6 @@ body { background-color: var(--bg-main); color: var(--text-dark); display: flex;
 
 .hidden { display: none !important; }
 
-/* CONTENEDOR DE LOGIN */
 .login-screen { display: flex; width: 100vw; height: 100vh; justify-content: center; align-items: center; background: #0f172a; position: absolute; z-index: 9999; }
 .login-box { background: white; padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; }
 .login-box h2 { margin-bottom: 1.5rem; color: #0f172a; font-weight: 700; }
@@ -51,7 +51,6 @@ body { background-color: var(--bg-main); color: var(--text-dark); display: flex;
 .btn-login { width: 100%; padding: 0.75rem; background: var(--accent-blue); color: white; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
 .btn-login:hover { background: var(--accent-blue-hover); }
 
-/* COMPONENTES PRINCIPALES APP */
 .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem 1rem; flex-shrink: 0; }
 .sidebar-header { margin-bottom: 2rem; }
 .sidebar-header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; }
@@ -71,7 +70,6 @@ body { background-color: var(--bg-main); color: var(--text-dark); display: flex;
 
 .section-content { flex-grow: 1; padding: 2rem; overflow-y: auto; }
 
-/* CONTENEDORES Y TARJETAS */
 .grid-indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
 .card-indicador { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: space-between; border-left: 5px solid var(--accent-blue); }
 .card-indicador.now { border-left-color: var(--sec-green); }
@@ -85,7 +83,6 @@ body { background-color: var(--bg-main); color: var(--text-dark); display: flex;
 .chart-container { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); height: 320px; position: relative; }
 .chart-container h3 { font-size: 1rem; margin-bottom: 1rem; color: #475569; }
 
-/* ELEMENTOS DE FORMULARIO Y TABLAS */
 .flex-panel { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; align-items: start; }
 @media (max-width: 900px) { .flex-panel { grid-template-columns: 1fr; } }
 
@@ -106,7 +103,6 @@ th { background: #f1f5f9; color: #475569; font-weight: 600; font-size: 0.85rem; 
 td { padding: 0.85rem 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; color: #334155; }
 tr:hover { background: #f8fafc; }
 
-/* BADGES Y BOTONES DE ACCIÓN */
 .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
 .bg-amber-100 { background-color: #fef3c7; } .text-amber-800 { color: #92400e; }
 .bg-emerald-100 { background-color: #d1fae5; } .text-emerald-800 { color: #065f46; }
@@ -117,7 +113,6 @@ tr:hover { background: #f8fafc; }
 .bg-sec-red { background-color: var(--sec-red); }
 .text-white { color: white; } .text-dark { color: #0f172a; }
 
-/* PANEL DE AJUSTES HHT */
 .ajustes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
 .ajustes-card { background: white; padding: 1.25rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-top: 4px solid var(--accent-blue); }
 </style>
@@ -127,7 +122,7 @@ tr:hover { background: #f8fafc; }
     <div id="loginContainer" class="login-screen">
         <div class="login-box">
             <h2>Control de Cumplimiento</h2>
-            <div id="loginError" class="badge bg-amber-100 text-amber-800 hidden style='width:100%; margin-bottom:1rem; padding:0.5rem;'"></div>
+            <div id="loginError" class="badge bg-amber-100 text-amber-800 hidden style='width: 100%; margin-bottom: 1rem; padding: 0.5rem;'"></div>
             <div class="form-group-login">
                 <label>Usuario</label>
                 <input type="text" id="loginUser" placeholder="Ej. jgarcia">
@@ -144,7 +139,7 @@ tr:hover { background: #f8fafc; }
         
         <div class="sidebar">
             <div class="sidebar-header">
-                <h1>SST & Cumplimiento</h1>
+                <h1 class="text-xl font-bold tracking-wide">SST & Cumplimiento</h1>
             </div>
             <div class="sidebar-nav">
                 <a onclick="cambiarSeccion('dashboard')" class="active">Panel Principal</a>
@@ -156,24 +151,24 @@ tr:hover { background: #f8fafc; }
             </div>
             <div class="sidebar-footer">
                 <div class="user-info-box">
-                    <span class="name" id="userDisplay">-</span>
-                    <span class="role" id="roleDisplay">-</span>
+                    <span class="name text-sm font-semibold text-white" id="userDisplay">-</span>
+                    <span class="role text-xs text-slate-400" id="roleDisplay">-</span>
                 </div>
-                <button class="btn-action bg-sec-red text-white" style="width: 100%; padding: 0.5rem;" onclick="logout()">Cerrar Sesión</button>
+                <button class="w-full mt-2 rounded bg-red-600 px-4 py-2 text-xs font-bold text-white hover:bg-red-700" onclick="logout()">Cerrar Sesión</button>
             </div>
         </div>
 
-        <div class="main-content">
-            <div class="top-bar">
-                <h2 id="sectionTitle">Panel de Monitoreo</h2>
-                <div class="theme-selector">
+        <div class="main-content flex flex-col flex-1 overflow-hidden">
+            <div class="top-bar flex items-center justify-between border-b border-slate-200 bg-white px-8">
+                <h2 id="sectionTitle" class="text-xl font-semibold text-slate-800">Panel de Monitoreo</h2>
+                <div class="theme-selector flex gap-2">
                     <button class="theme-btn" style="background:#f1f5f9;" onclick="setTheme('default')"></button>
                     <button class="theme-btn" style="background:#1e293b;" onclick="setTheme('light')"></button>
                     <button class="theme-btn" style="background:#14532d;" onclick="setTheme('eco')"></button>
                 </div>
             </div>
 
-            <div class="section-content">
+            <div class="section-content flex-1 p-8 overflow-y-auto">
                 
                 <div id="dashboard" class="section-content-inner">
                     <div class="grid-indicadores">
@@ -216,9 +211,9 @@ tr:hover { background: #f8fafc; }
                                     </select>
                                 </div>
                                 <div class="form-group"><label>Fecha</label><input type="date" id="act_fecha" required></div>
-                                <div class="form-row" style="display:flex; gap:0.5rem;">
-                                    <div class="form-group" style="flex:1;"><label>Inicio</label><input type="time" id="act_inicio" required></div>
-                                    <div class="form-group" style="flex:1;"><label>Fin</label><input type="time" id="act_fin" required></div>
+                                <div style="display:flex; gap:0.5rem; margin-bottom: 1rem;">
+                                    <div style="flex:1;"><label style="font-size: 0.85rem; font-weight:600;">Inicio</label><input type="time" id="act_inicio" style="width:100%; border:1px solid #cbd5e1; padding:0.5rem; border-radius:6px;" required></div>
+                                    <div style="flex:1;"><label style="font-size: 0.85rem; font-weight:600;">Fin</label><input type="time" id="act_fin" style="width:100%; border:1px solid #cbd5e1; padding:0.5rem; border-radius:6px;" required></div>
                                 </div>
                                 <div class="form-group">
                                     <label>Estado Inicial</label>
@@ -278,7 +273,7 @@ tr:hover { background: #f8fafc; }
                                 <button type="submit" class="btn-submit">Subir Reporte</button>
                             </form>
                         </div>
-                        <div class="table-box" style="flex-grow:1;">
+                        <div class="table-box">
                             <div class="table-container">
                                 <table>
                                     <thead><tr><th>Encargado</th><th>Título</th><th>Origen</th><th>Tipo</th><th>Criticidad</th><th>Estado</th><th>Acción</th></tr></thead>
@@ -301,14 +296,14 @@ tr:hover { background: #f8fafc; }
                                     <select id="aso_estatus"><option>Evaluado</option><option>En Proceso</option><option>No Aprobado</option></select>
                                 </div>
                                 <div class="form-group"><label>Fecha</label><input type="date" id="aso_fecha" required></div>
-                                <div class="form-row" style="display:flex; gap:0.5rem;">
-                                    <div class="form-group" style="flex:1;"><label>Entrada</label><input type="time" id="aso_inicio" required></div>
-                                    <div class="form-group" style="flex:1;"><label>Salida</label><input type="time" id="aso_fin" required></div>
+                                <div style="display:flex; gap:0.5rem; margin-bottom: 1rem;">
+                                    <div style="flex:1;"><label style="font-size: 0.85rem; font-weight:600;">Entrada</label><input type="time" id="aso_inicio" style="width:100%; border:1px solid #cbd5e1; padding:0.5rem; border-radius:6px;" required></div>
+                                    <div style="flex:1;"><label style="font-size: 0.85rem; font-weight:600;">Salida</label><input type="time" id="aso_fin" style="width:100%; border:1px solid #cbd5e1; padding:0.5rem; border-radius:6px;" required></div>
                                 </div>
                                 <button type="submit" class="btn-submit">Registrar Asociado</button>
                             </form>
                         </div>
-                        <div class="table-box" style="flex-grow:1;">
+                        <div class="table-box">
                             <div class="table-container">
                                 <table>
                                     <thead><tr><th>Responsable</th><th>Asociado</th><th>Estatus</th><th>Horario de Visita</th><th>Acción</th></tr></thead>
@@ -338,7 +333,7 @@ tr:hover { background: #f8fafc; }
                                 <button type="submit" class="btn-submit">Añadir Personal</button>
                             </form>
                         </div>
-                        <div class="table-box" style="flex-grow:1;">
+                        <div class="table-box">
                             <div class="table-container">
                                 <table>
                                     <thead><tr><th>Tipo</th><th>Nombre</th><th>Documento</th><th>Fecha</th><th>Empresa</th><th>Acción</th></tr></thead>
@@ -389,14 +384,12 @@ tr:hover { background: #f8fafc; }
     </div>
 
     <script>
-    // --- CONFIGURACIÓN DE ACCESO NUBE ---
     const SUPABASE_URL = "https://gboiiwvzpkzefabuxmus.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Bko00sMkVNLUrWVuqJ7VFw_SL4rje8Z"; 
 
     const { createClient } = window.supabase;
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // --- CREDENCIALES DE ACCESO DE PERSONAL ---
     const USUARIOS_VALIDOS = {
         "vtorres": { clave: "123", nombre: "Victor Torres", rol: "Gerente" },
         "jhilario": { clave: "123", nombre: "Jhoan Hilario", rol: "Coordinador" },
@@ -406,7 +399,6 @@ tr:hover { background: #f8fafc; }
     let sesionActual = JSON.parse(localStorage.getItem('sesion_usuario')) || null;
     let appTheme = localStorage.getItem('app_theme') || 'default';
 
-    // Buffers volátiles locales para renderizado óptimo
     let actividades = [];
     let reportes = [];
     let asociados = [];
@@ -420,7 +412,6 @@ tr:hover { background: #f8fafc; }
     let myCategoryChart = null;
     let myComplianceChart = null;
 
-    // --- INICIALIZADOR ---
     document.addEventListener("DOMContentLoaded", async () => {
         aplicarTema(appTheme);
         if (!sesionActual) {
@@ -432,27 +423,20 @@ tr:hover { background: #f8fafc; }
         }
     });
 
-    // --- TRAER DATOS ASÍNCRONAMENTE DESDE SUPABASE ---
     async function cargarDatosDesdeSupabase() {
-        mostrarLoader(true);
         try {
-            // 1. Actividades orden descendente por creación
             const { data: dataAct, error: errAct } = await supabase.from('actividades').select('*').order('created_at', { ascending: false });
             if (!errAct) actividades = dataAct || [];
 
-            // 2. Reportes
             const { data: dataRep, error: errRep } = await supabase.from('reportes').select('*').order('created_at', { ascending: false });
             if (!errRep) reportes = dataRep || [];
 
-            // 3. Asociados
             const { data: dataAso, error: errAso } = await supabase.from('asociados').select('*').order('created_at', { ascending: false });
             if (!errAso) asociados = dataAso || [];
 
-            // 4. Inducciones
             const { data: dataInd, error: errInd } = await supabase.from('inducciones').select('*').order('created_at', { ascending: false });
             if (!errInd) inducciones = dataInd || [];
 
-            // 5. Matriz Maestra de Accidentabilidad
             const { data: dataAcc, error: errAcc } = await supabase.from('accidentabilidad').select('*');
             if (!errAcc && dataAcc) {
                 dataAcc.forEach(row => {
@@ -471,9 +455,7 @@ tr:hover { background: #f8fafc; }
 
             actualizarUI();
         } catch (e) {
-            console.error("Fallo general de comunicación con Supabase:", e);
-        } finally {
-            mostrarLoader(false);
+            console.error("Fallo de comunicación con Supabase:", e);
         }
     }
 
@@ -485,11 +467,6 @@ tr:hover { background: #f8fafc; }
         renderInducciones();
     }
 
-    function mostrarLoader(show) {
-        console.log(show ? "Sincronizando con Supabase..." : "Datos listos.");
-    }
-
-    // --- ACCESOS (LOGIN) ---
     window.login = function() {
         let user = document.getElementById("loginUser").value.trim().toLowerCase();
         let pass = document.getElementById("loginPass").value;
@@ -526,7 +503,6 @@ tr:hover { background: #f8fafc; }
         document.getElementById("roleDisplay").innerText = sesionActual.rol;
     }
 
-    // --- CAMBIADOR DE PESTAÑAS (NAVEGACIÓN) ---
     window.cambiarSeccion = function(idSeccion) {
         document.querySelectorAll(".section-content-inner").forEach(s => s.classList.add("hidden"));
         let target = document.getElementById(idSeccion);
@@ -536,12 +512,10 @@ tr:hover { background: #f8fafc; }
         let navActive = document.querySelector(`.sidebar-nav a[onclick*="${idSeccion}"]`);
         if(navActive) navActive.classList.add("active");
 
-        // Cambiar título superior dinámicamente
         const titulos = { dashboard: "Panel de Monitoreo", actividades: "Bitácora de Actividades", reportes: "Incidentes e Historial HSE", asociados: "Control de Asociados de Negocios", inducciones: "Historial de Inducciones SST", ajustes: "Configurar Parámetros Operativos" };
         document.getElementById("sectionTitle").innerText = titulos[idSeccion] || "Sistema Control";
     }
 
-    // --- PANEL DE CONTROL: INDICADORES E HISTÓRICOS ---
     window.guardarAccidentabilidad = async function(empresa) {
         let prefijo = empresa.toLowerCase();
         let data = {
@@ -557,11 +531,11 @@ tr:hover { background: #f8fafc; }
         const { error } = await supabase.from('accidentabilidad').upsert(data);
         
         if (error) {
-            alert("Error al subir a la base de datos: " + error.message);
+            alert("Error al subir a Supabase: " + error.message);
         } else {
             accidentabilidadMaestra[empresa] = data;
             renderDashboard();
-            alert(`Matriz de ${empresa} guardada perfectamente.`);
+            alert(`Matriz de ${empresa} actualizada con éxito.`);
         }
     }
 
@@ -589,7 +563,6 @@ tr:hover { background: #f8fafc; }
         renderGraficos();
     }
 
-    // --- MÓDULO: ACTIVIDADES ---
     window.registrarActividad = async function(e) {
         if(e) e.preventDefault();
         let nueva = {
@@ -606,7 +579,7 @@ tr:hover { background: #f8fafc; }
         const { data, error } = await supabase.from('actividades').insert([nueva]).select();
 
         if(error) {
-            alert("Fallo en inserción: " + error.message);
+            alert("Error al insertar: " + error.message);
         } else {
             actividades.unshift(data[0]);
             document.getElementById("formActividades").reset();
@@ -617,7 +590,7 @@ tr:hover { background: #f8fafc; }
     window.eliminarActividad = async function(id) {
         if(!confirm("¿Remover esta actividad?")) return;
         const { error } = await supabase.from('actividades').delete().eq('id', id);
-        if(error) alert("Fallo al eliminar: " + error.message);
+        if(error) alert("Error al eliminar: " + error.message);
         else {
             actividades = actividades.filter(a => a.id !== id);
             actualizarUI();
@@ -626,7 +599,7 @@ tr:hover { background: #f8fafc; }
 
     window.cambiarEstadoActividad = async function(id, nuevoEstado) {
         const { error } = await supabase.from('actividades').update({ estado: nuevoEstado }).eq('id', id);
-        if(error) alert("Error de actualización: " + error.message);
+        if(error) alert("Error al actualizar: " + error.message);
         else {
             let act = actividades.find(a => a.id === id);
             if(act) act.estado = nuevoEstado;
@@ -676,7 +649,6 @@ tr:hover { background: #f8fafc; }
         });
     }
 
-    // --- MÓDULO: CONTROL DE REPORTES ---
     window.registrarReporte = async function(e) {
         if(e) e.preventDefault();
         let nuevo = {
@@ -690,7 +662,7 @@ tr:hover { background: #f8fafc; }
         };
 
         const { data, error } = await supabase.from('reportes').insert([nuevo]).select();
-        if(error) alert("Error al subir reporte: " + error.message);
+        if(error) alert("Error al registrar reporte: " + error.message);
         else {
             reportes.unshift(data[0]);
             document.getElementById("formReportes").reset();
@@ -730,7 +702,6 @@ tr:hover { background: #f8fafc; }
         });
     }
 
-    // --- MÓDULO: ASOCIADOS ---
     window.registrarAsociado = async function(e) {
         if(e) e.preventDefault();
         let nuevo = {
@@ -781,7 +752,6 @@ tr:hover { background: #f8fafc; }
         });
     }
 
-    // --- MÓDULO: INDUCCIONES SST ---
     window.registrarInduccion = async function(e) {
         if(e) e.preventDefault();
         let nueva = {
@@ -832,13 +802,11 @@ tr:hover { background: #f8fafc; }
         });
     }
 
-    // --- FILTRADOS ---
     window.filtrarActividades = function() {
         renderActividades();
         renderGraficos();
     }
 
-    // --- ACTUALIZACIÓN DE GRÁFICOS (CHART.JS) ---
     function renderGraficos() {
         let filtro = document.getElementById("filtroUsuarioAct").value;
         let filtroDia = document.getElementById("filtroDiaAct").value;
@@ -873,7 +841,6 @@ tr:hover { background: #f8fafc; }
         }
     }
 
-    // --- TEMAS / ESTILOS ---
     window.setTheme = function(themeName) {
         appTheme = themeName;
         localStorage.setItem('app_theme', themeName);
