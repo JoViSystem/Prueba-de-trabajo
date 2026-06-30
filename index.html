@@ -623,6 +623,11 @@ table select {
         <a id="menu-configuracion" onclick="showSection('configuracion')">⚙️ Configuración</a>
         
         <a onclick="logout()" class="btn-logout">🚪 Cerrar Sesión</a>
+
+        <div style="display:flex;align-items:center;gap:8px;margin-top:16px;padding:8px 14px;background:rgba(255,255,255,0.05);border-radius:8px;">
+            <span id="sb-dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f59e0b;flex-shrink:0;transition:background 0.3s;"></span>
+            <span id="sb-txt" style="font-size:11px;color:#94a3b8;">Conectando...</span>
+        </div>
     </div>
 
     <div class="main">
@@ -1039,7 +1044,7 @@ table select {
 // ==========================================
 // SUPABASE — CONFIGURACIÓN Y CONEXIÓN
 // ==========================================
-// Antes de usar, ejecuta este SQL en Supabase → SQL Editor:
+// SQL a ejecutar UNA SOLA VEZ en Supabase → SQL Editor:
 //
 // CREATE TABLE IF NOT EXISTS app_data (
 //   key TEXT PRIMARY KEY,
@@ -1049,44 +1054,83 @@ table select {
 // ALTER TABLE app_data ENABLE ROW LEVEL SECURITY;
 // CREATE POLICY "acceso_libre" ON app_data
 //   FOR ALL USING (true) WITH CHECK (true);
+// -- Activar Realtime para la tabla:
+// ALTER PUBLICATION supabase_realtime ADD TABLE app_data;
 //
 // ==========================================
 
-const SUPABASE_URL  = "https://gboiiwvzpkzefabuxmus.supabase.co";
-const SUPABASE_KEY  = "sb_secret_2bjUHqp4SOqIdxg2AYgqkw_WweuRxe4";
-const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = "https://gboiiwvzpkzefabuxmus.supabase.co";
+const SUPABASE_KEY = "sb_secret_2bjUHqp4SOqIdxg2AYgqkw_WweuRxe4";
+const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function sbSet(key, value) {
-    try {
-        await _sb.from('app_data').upsert(
-            { key, value, updated_at: new Date().toISOString() },
-            { onConflict: 'key' }
-        );
-    } catch(e) { console.warn("[Supabase] Error al guardar '" + key + "':", e); }
+function sbActualizarIndicador(estado) {
+    let dot = document.getElementById('sb-dot');
+    let txt = document.getElementById('sb-txt');
+    if (!dot || !txt) return;
+    if (estado === 'ok')         { dot.style.background = '#10b981'; txt.innerText = 'Nube sincronizada'; }
+    else if (estado === 'live')  { dot.style.background = '#10b981'; dot.style.boxShadow = '0 0 6px #10b981'; txt.innerText = 'Tiempo real activo'; }
+    else if (estado === 'error') { dot.style.background = '#ef4444'; txt.innerText = 'Error de conexión'; }
+    else                         { dot.style.background = '#f59e0b'; txt.innerText = 'Conectando...'; }
 }
 
-async function sbGet(key) {
+function sbAplicarFila(key, value) {
+    if (!key || !value) return;
+    localStorage.setItem(key, value);
     try {
-        let { data, error } = await _sb.from('app_data').select('value').eq('key', key).maybeSingle();
-        if (error) return null;
-        return data ? data.value : null;
-    } catch(e) { console.warn("[Supabase] Error al leer '" + key + "':", e); return null; }
+        if      (key === 'act')                    actividades            = JSON.parse(value);
+        else if (key === 'rep')                    reportes               = JSON.parse(value);
+        else if (key === 'asoc')                   asociados              = JSON.parse(value);
+        else if (key === 'ind')                    inducciones            = JSON.parse(value);
+        else if (key === 'acc_master_3_companies') accidentabilidadMaestra = JSON.parse(value);
+        else if (key === 'app_usuarios')           USUARIOS_VALIDOS       = JSON.parse(value);
+    } catch(e) {}
+}
+
+async function sbSet(key, value) {
+    let { error } = await _sb.from('app_data').upsert(
+        { key, value, updated_at: new Date().toISOString() },
+        { onConflict: 'key' }
+    );
+    if (error) { console.error("[Supabase] Error al guardar '" + key + "':", error.message); sbActualizarIndicador('error'); }
+    else sbActualizarIndicador('ok');
 }
 
 async function cargarDatosDesdeSupabase() {
-    try {
-        let { data, error } = await _sb.from('app_data').select('key, value');
-        if (error || !data || data.length === 0) return;
-        data.forEach(row => { if (row.value !== null) localStorage.setItem(row.key, row.value); });
-        // Refrescar variables globales con los datos recién descargados
-        let u = localStorage.getItem("app_usuarios"); if (u) USUARIOS_VALIDOS = JSON.parse(u);
-        let a = localStorage.getItem("act");           if (a) actividades = JSON.parse(a);
-        let r = localStorage.getItem("rep");           if (r) reportes = JSON.parse(r);
-        let s = localStorage.getItem("asoc");          if (s) asociados = JSON.parse(s);
-        let i = localStorage.getItem("ind");           if (i) inducciones = JSON.parse(i);
-        let m = localStorage.getItem("acc_master_3_companies"); if (m) accidentabilidadMaestra = JSON.parse(m);
-        console.log("[Supabase] Datos cargados correctamente.");
-    } catch(e) { console.warn("[Supabase] Error cargando datos:", e); }
+    sbActualizarIndicador('connecting');
+    let { data, error } = await _sb.from('app_data').select('key, value');
+    if (error) {
+        console.error("[Supabase] Error al cargar datos:", error.message);
+        sbActualizarIndicador('error');
+        return;
+    }
+    if (data && data.length > 0) {
+        data.forEach(row => sbAplicarFila(row.key, row.value));
+        console.log("[Supabase] " + data.length + " registros cargados.");
+    }
+    sbActualizarIndicador('ok');
+}
+
+function activarSincronizacionRealtime() {
+    _sb.channel('sync_app_data')
+        .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'app_data' },
+            (payload) => {
+                let row = payload.new || {};
+                sbAplicarFila(row.key, row.value);
+                if (usuarioActivo) ejecutarFiltroGlobal();
+                sbActualizarIndicador('live');
+                console.log("[Supabase Realtime] Cambio recibido:", row.key);
+            }
+        )
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                sbActualizarIndicador('live');
+                console.log("[Supabase Realtime] Suscripción activa.");
+            } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+                sbActualizarIndicador('error');
+                console.warn("[Supabase Realtime] Sin conexión:", status);
+            }
+        });
 }
 
 // ==========================================
@@ -1903,9 +1947,10 @@ function updateCharts() {
     renderModuloVisualAccidentabilidad();
 }
 
-// Carga datos desde Supabase al iniciar y luego verifica la sesión activa
+// Carga datos desde Supabase al iniciar, activa realtime y verifica la sesión activa
 (async () => {
     await cargarDatosDesdeSupabase();
+    activarSincronizacionRealtime();
     verificarSesion();
 })();
 </script>
